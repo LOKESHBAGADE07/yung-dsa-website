@@ -1,0 +1,49 @@
+{
+  "theme": "dark",
+  "emotional_tone": "Cinematic, raw, confident, elite Indian hip-hop aesthetic with Pune street grit and modern luxury",
+  "archetype": "LUXURY & PERFORMANCE PRO HYBRID",
+  "typography": {
+    "heading_font": "Unbounded, Syne, sans-serif",
+    "body_font": "Space Grotesk, Inter, sans-serif",
+    "mono_font": "JetBrains Mono, monospace"
+  },
+  "colors": {
+    "background": "#09090b",
+    "surface": "#121216",
+    "surface_elevated": "#1a1a20",
+    "primary": "#e11d48",
+    "primary_hover": "#f43f5e",
+    "accent": "#ef4444",
+    "text_main": "#f4f4f5",
+    "text_muted": "#a1a1aa",
+    "border_color": "#27272a"
+  },
+  "visual_enhancers": {
+    "grain_overlay": true,
+    "glass_blur": "backdrop-blur-xl bg-black/60",
+    "glow_effects": "shadow-[0_0_30px_rgba(225,29,72,0.15)]",
+    "border_style": "border border-zinc-800/80 hover:border-rose-600/50 transition-all duration-300"
+  },
+  "component_path": "/app/frontend/src/components/",
+  "instructions_to_main_agent": "Build the official digital home for YUNG DSA with complete fidelity to the user prompt and design specs. Ensure interactive features like music player preview, discography filters, video modal, tour date booking / empty state toggle, professional booking form with toast notification, press kit download, and gallery lightbox are fully functional in React JS.",
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": [
+    "You tend to converge toward generic, 'on distribution' outputs. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "You MUST NOT apply universal transition. Eg: transition: all. Always add transitions for specific interactive elements like button, input excluding transforms.",
+    "You MUST NOT center align the app container.",
+    "Always use modern button styles like pill-shaped or sharp button with interaction animations & color relevant to the app style.",
+    "NEVER use AI assistant Emoji characters like 🤖🧠💭💡🔮🎯 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "All interactive and key informational elements MUST include a data-testid attribute to facilitate robust automated testing."
+  ],
+  "image_urls": {
+    "hero_background": "https://images.unsplash.com/photo-1597441768908-1c26be0abe09?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwzfHxoaXAlMjBob3AlMjByYXBwZXIlMjBwb3J0cmFpdCUyMGRhcmslMjBjaW5lbWF0aWN8ZW58MHx8fHwxNzkwOTU0NzIyfDA&ixlib=rb-4.1.0&q=85",
+    "artist_portrait": "https://images.unsplash.com/photo-1770055447852-faa4d0ebfca0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwyfHxoaXAlMjBob3AlMjByYXBwZXIlMjBwb3J0cmFpdCUyMGRhcmslMjBjaW5lbWF0aWN8ZW58MHx8fHwxNzkwOTU0NzIyfDA&ixlib=rb-4.1.0&q=85",
+    "live_concert": "https://images.unsplash.com/photo-1575112165295-29b81f5f269e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDB8MHwxfHNlYXJjaHwxfHxoaXAlMjBob3AlMjBjb25jZXJ0JTIwc3RhZ2UlMjBsaWdodHMlMjBzbW9rZXxlbnwwfHx8fDE3OTA5NTQ3MjV8MA&ixlib=rb-4.1.0&q=85",
+    "studio_session": "https://images.unsplash.com/photo-1775303207909-20a9a9647617?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHw0fHxoaXAlMjBob3AlMjByYXBwZXIlMjBwb3J0cmFpdCUyMGRhcmslMjBjaW5lbWF0aWN8ZW58MHx8fHwxNzkwOTU0NzIyfDA&ixlib=rb-4.1.0&q=85"
+  }
+}

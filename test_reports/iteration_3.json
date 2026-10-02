@@ -1,0 +1,27 @@
+{
+  "summary": "Frontend-only responsive restructure verification across 1920/1440/1024/768/390 breakpoints. All critical UI contracts (overflow, header alignment, hero media, latest release, catalogue order & modals, Spotify iframe, WATCH 3-card grid, About/Shows/Gallery, Press, Follow socials, footer, booking submission, mobile nav) PASS. One spec-level deviation found: at 390px the hero image does NOT stack above the text — it still renders as a background layer under the hero content (image bottom overlaps h1 top).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Hero @ 390px", "issue": "Spec requires image block to sit above the text at mobile (image.bottom <= h1.top). Observed imgBottom=489.5 vs h1Top=402.5 — image renders as full-bleed background behind the text instead of stacking above it. CSS .hero-media is absolute/background at mobile; needs to be converted to a stacked block (position: relative, aspect-ratio 16:9, image above .hero-content) at <=600px breakpoint.", "selector": ".hero / .hero-media / .hero-content", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Restructure .hero at mobile (<=600px) so .hero-media is a block element above .hero-content (image.bottom <= h1.top), not an absolute background."
+  ],
+  "critical_code_review_comments": [
+    "App.js attribute `fetchpriority` triggers React console warning — should be `fetchPriority` (camelCase) for React 18+.",
+    "Spotify embed throws a RangeError in headless Chromium (locale issue) and a client-side exception inside the iframe — environment artefact only; src is correct.",
+    "`platform.name.toLowerCase().replace(' ', '-')` works for 'Apple Music' because there's only one space; still safer to use `replaceAll` for consistency with the press-items key logic."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a", "frontend": "97%"},
+  "seed_data_creation": "Submitted one TEST booking inquiry (name=TEST QA, email=test@qa.io) via POST /api/booking-inquiries which returned 200 and rendered success message.",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "All data-testids, image srcs, href targets, aspect ratios, filter removal, catalogue order (10 rows), modal + backdrop close, PDF 200/application-pdf, iframe srcs for YouTube-nocookie and Spotify embed are verified. Only remaining spec-deviation to retest after main-agent fix: mobile hero stacking (image bottom <= h1 top at 390px).",
+  "rca of the issue": "Hero at mobile: .hero-media is positioned absolutely (full-bleed background) across all breakpoints. At >=601px that's intentional; at <=600px the spec wants a stacked column layout. Fix: in @media (max-width: 600px), set .hero { display: flex; flex-direction: column; } .hero-media { position: relative; aspect-ratio: 16/9; } .hero-inner { position: static; } so the <img> block renders above the headline."
+}
