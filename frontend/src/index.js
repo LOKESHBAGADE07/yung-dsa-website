@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "@/index.css";
 import App from "@/App";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,6 +21,7 @@ root.render(
     <QueryClientProvider client={queryClient}>
       <App />
       <Analytics />
+      <SpeedInsights />
     </QueryClientProvider>
   </React.StrictMode>,
 );
