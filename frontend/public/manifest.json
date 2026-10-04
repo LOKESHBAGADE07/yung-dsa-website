@@ -1,0 +1,17 @@
+{
+  "short_name": "YUNG DSA",
+  "name": "YUNG DSA — Official Artist Website",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "Official website of YUNG DSA — Indian Hip-Hop Rapper from Pune 06."
+}
