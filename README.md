@@ -1,91 +1,36 @@
-# YUNG DSA — Official Artist Website
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Official digital platform and booking portal for **YUNG DSA** (Harsh Vijay Machare), Indian hip-hop artist and rapper representing Pune 06 and Yerwada.
+## Getting Started
 
----
+First, run the development server:
 
-## 🌟 Overview
-
-This repository contains the source code for [yungdsa.com](https://yungdsa.com/), featuring:
-- **Discography & Music Showcase**: Direct stream integration with Spotify API and YouTube embed player.
-- **Visuals Gallery & Music Video Player**: High-definition video player modal with official music videos from Gully Gang Records, Sony Music India, and independent releases.
-- **Management & Booking Engine**: Direct inquiry routing to management (`yungdsa06@gmail.com`) backed by FastAPI and MongoDB.
-- **Official Press Package**: Built-in press kit generator, bio, approved media assets, and news features.
-- **PWA & Search Engine Optimization**: Structured JSON-LD metadata for search engines and AI previews, Open Graph, Twitter Cards, responsive layout, dark aesthetic, and static noscript HTML pre-rendering.
-
----
-
-## 🛠️ Architecture & Tech Stack
-
-### Frontend
-- **Framework**: React.js 18
-- **Styling**: Vanilla CSS (Custom tokens, glassmorphism, responsive grid layout)
-- **Icons**: Lucide React
-- **Data Fetching & Toast**: Axios, `@tanstack/react-query`, Sonner
-- **Analytics**: Vercel Analytics, Speed Insights, PostHog
-
-### Backend
-- **Framework**: FastAPI (Python 3.10+)
-- **Database**: MongoDB (via `motor` async client)
-- **Validation**: Pydantic v2
-- **Deployment**: Vercel Serverless / Cloud Backend
-
----
-
-## 📁 Directory Structure
-
-```
-.
-├── backend/
-│   ├── server.py              # FastAPI application server & routes
-│   ├── requirements.txt       # Python dependencies
-│   └── pytest.ini             # Pytest configuration
-├── frontend/
-│   ├── public/
-│   │   ├── index.html         # Base HTML with SEO tags & noscript fallback
-│   │   ├── favicon.svg        # Brand icon
-│   │   ├── manifest.json      # Web app manifest
-│   │   ├── press-kit.html     # Standalone printable Press Kit
-│   │   ├── sitemap.xml        # Sitemap for search engine indexing
-│   │   └── media/             # Official artist photography
-│   ├── src/
-│   │   ├── App.js             # Main layout & interactive components
-│   │   ├── App.css            # Custom design system & animations
-│   │   ├── content.js         # Public content metadata & streaming URLs
-│   │   └── index.js           # App entry point & provider wrappers
-│   └── vercel.json            # Security headers & build specs
-└── README.md
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
----
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 🚀 Getting Started
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-### Local Development
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-1. **Frontend Setup**:
-   ```bash
-   cd frontend
-   yarn install
-   yarn start
-   ```
+## Learn More
 
-2. **Backend Setup**:
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   uvicorn server:app --reload --port 8000
-   ```
+To learn more about Next.js, take a look at the following resources:
 
-3. **Environment Variables**:
-   - `REACT_APP_BACKEND_URL`: URL of the FastAPI backend service (e.g. `http://localhost:8000`)
-   - `MONGO_URL`: MongoDB connection string
-   - `DB_NAME`: Database name (e.g. `yungdsa_prod`)
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
----
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## 📩 Official Contacts
+## Deploy on Vercel
 
-- **Artist**: YUNG DSA (`@yung_dsa`)
-- **Management & Bookings**: `yungdsa06@gmail.com`
-- **Website**: [https://yungdsa.com](https://yungdsa.com)
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
