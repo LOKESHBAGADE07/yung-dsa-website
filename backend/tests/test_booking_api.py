@@ -1,47 +1,43 @@
-import os
+"""Exercise the disabled booking route locally; never submit to a live site."""
+import importlib.util
+from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-import requests
-
-
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "").rstrip("/")
+from fastapi.testclient import TestClient
 
 
 @pytest.fixture
-def api_client():
-    session = requests.Session()
-    session.headers.update({"Content-Type": "application/json"})
-    return session
+def booking_app(monkeypatch):
+    monkeypatch.setenv("MONGO_URL", "mongodb://127.0.0.1:27017")
+    monkeypatch.setenv("DB_NAME", "yung_dsa_test")
+    spec = importlib.util.spec_from_file_location("booking_test_server", Path(__file__).parents[1] / "server.py")
+    server = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(server)
+    database = MagicMock()
+    database.booking_inquiries.insert_one = AsyncMock()
+    monkeypatch.setattr(server, "db", database)
+    with TestClient(server.app) as client:
+        yield client, database
+    server.client.close()
 
 
-def test_booking_inquiry_accepts_valid_payload(api_client):
-    response = api_client.post(
-        f"{BASE_URL}/api/booking-inquiries",
-        json={
-            "name": "TEST_Artist Booker",
-            "email": "test-booker@example.com",
-            "phone": "+91 9999999999",
-            "organization": "TEST_Events Co",
-            "inquiry_type": "Live Shows",
-            "city": "Mumbai",
-            "event_date": "2025-12-01",
-            "budget": "TEST_50000",
-            "message": "TEST booking inquiry",
-        },
-        timeout=20,
-    )
-    assert response.status_code == 200
-    data = response.json()
-    assert data["received"] is True
-    assert isinstance(data["id"], str) and data["id"]
-    assert "management" in data["message"].lower()
+@pytest.mark.parametrize("payload", [
+    {"name": "Test Booker", "email": "test@example.com", "inquiry_type": "Live Shows", "message": "Test inquiry"},
+    {"email": "test@example.com"},
+    {},
+])
+def test_booking_requests_are_rejected_without_storage(booking_app, payload):
+    client, database = booking_app
+    response = client.post("/api/booking-inquiries", json=payload)
+    assert response.status_code == 403
+    assert "independent website concept" in response.json()["detail"]
+    assert "received" not in response.json()
+    database.booking_inquiries.insert_one.assert_not_called()
 
 
-def test_booking_inquiry_rejects_missing_required_fields(api_client):
-    response = api_client.post(
-        f"{BASE_URL}/api/booking-inquiries",
-        json={"email": "test-booker@example.com"},
-        timeout=20,
-    )
-    assert response.status_code == 422
-    assert "detail" in response.json()
+def test_disabled_route_does_not_require_or_read_a_form(booking_app):
+    client, database = booking_app
+    response = client.post("/api/booking-inquiries", content="not valid JSON", headers={"Content-Type": "application/json"})
+    assert response.status_code == 403
+    database.booking_inquiries.insert_one.assert_not_called()
