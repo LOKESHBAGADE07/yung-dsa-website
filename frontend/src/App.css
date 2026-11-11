@@ -146,3 +146,20 @@
   .gallery-0{grid-column:span 2;aspect-ratio:4/3}
   .section-head{align-items:flex-start;flex-direction:column;gap:14px}
 }
+
+/* Independent concept disclosure and creator links */
+.concept-notice{padding:104px var(--grid-x) 20px;background:#191216;border-bottom:1px solid var(--line);font:400 14px/1.6 'Space Grotesk',sans-serif;color:var(--white)}
+.concept-notice a,.concept-card a:not(.button),.creator-credit a{color:var(--white);text-decoration:underline;text-underline-offset:4px}
+.concept-notice a:focus-visible,.concept-card a:focus-visible,.creator-credit a:focus-visible,.artist-channel-card:focus-visible{outline:2px solid var(--red-bright);outline-offset:5px}
+.artist-wordmark{min-height:420px;display:flex;flex-direction:column;justify-content:center;align-items:center;border:1px solid var(--line);background:radial-gradient(ellipse at bottom,#411423,var(--surface) 70%);font-family:'Unbounded',sans-serif}
+.artist-wordmark>span{font-size:22px;letter-spacing:8px}.artist-wordmark strong{font-size:clamp(100px,16vw,210px);line-height:1.2;color:var(--red)}.artist-wordmark small{font:600 11px 'Space Grotesk',sans-serif;letter-spacing:3px}
+.artist-channel-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:45px}
+.artist-channel-card{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:32px 24px;border:1px solid var(--line);background:var(--surface);color:var(--white);font:600 16px 'Space Grotesk',sans-serif;text-decoration:none}
+.artist-channel-card:hover{border-color:var(--red)}
+.concept-card{padding:32px;border:1px solid var(--line);background:var(--surface);min-width:0}
+.concept-card h3{font:600 20px/1.5 'Space Grotesk',sans-serif;margin:0 0 20px}
+.concept-card p{font:400 15px/1.7 'Space Grotesk',sans-serif;color:var(--muted)}
+.concept-card .button{white-space:normal;text-align:center;max-width:100%;line-height:1.5}
+.concept-card .concept-credit{margin-top:26px}.concept-credit svg{display:inline;vertical-align:middle}
+.footer .creator-credit{line-height:1.8;max-width:340px;overflow-wrap:anywhere}
+@media(max-width:600px){.concept-notice{padding-top:94px;font-size:13px}.artist-wordmark{min-height:280px}.artist-channel-grid{grid-template-columns:1fr}.concept-card{padding:24px 18px}}

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -37,37 +37,19 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
-class BookingInquiry(BaseModel):
-    name: str
-    email: str
-    phone: str = ""
-    organization: str = ""
-    inquiry_type: str
-    city: str = ""
-    event_date: str = ""
-    budget: str = ""
-    message: str
-
-class BookingInquiryResponse(BaseModel):
-    id: str
-    received: bool
-    message: str
-
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
     return {"message": "Hello World"}
 
-@api_router.post("/booking-inquiries", response_model=BookingInquiryResponse)
-async def create_booking_inquiry(input: BookingInquiry):
-    inquiry = input.model_dump()
-    inquiry["id"] = str(uuid.uuid4())
-    inquiry["received_at"] = datetime.now(timezone.utc).isoformat()
-    await db.booking_inquiries.insert_one(inquiry)
-    return BookingInquiryResponse(
-        id=inquiry["id"],
-        received=True,
-        message="Your inquiry has been received by the management team."
+@api_router.post("/booking-inquiries")
+async def create_booking_inquiry():
+    # Reject stale forms and direct requests without saving personal details.
+    # Existing database records are preserved.
+    raise HTTPException(
+        status_code=403,
+        detail="Bookings are not accepted by this independent website concept. "
+               "Please use the artist\'s own public channels.",
     )
 
 @api_router.post("/status", response_model=StatusCheck)

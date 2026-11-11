@@ -18,12 +18,6 @@ export const spotifyEmbed = "https://open.spotify.com/embed/artist/5e8gOu2fk8b1t
 export const images = {
   // Official still from the MAAF KAR music video (Sony Music India, 2025)
   hero: ytThumb("plK0mRQEluI"),
-  // Official artist photo from the Spotify artist profile (self-hosted copy)
-  portrait: "/media/artist-portrait-spotify.jpg",
-  // Official YouTube channel profile photo (self-hosted copy)
-  channelAvatar: "/media/official-portrait-youtube.jpg",
-  // Press photo published by Rolling Stone India, May 2025 (self-hosted copy)
-  press: "/media/press-portrait-rolling-stone.jpg",
 };
 
 export const bio =
@@ -53,11 +47,6 @@ export const releases = [
 
 export const featuredVideos = releases.slice(0, 3);
 
-export const gallery = [
-  { category: "PRESS PORTRAIT / ROLLING STONE INDIA, 2025", image: images.press },
-  { category: "ARTIST PORTRAIT / SPOTIFY", image: images.portrait },
-  { category: "OFFICIAL PORTRAIT / YOUTUBE", image: images.channelAvatar },
-];
 
 export const press = [
   {
