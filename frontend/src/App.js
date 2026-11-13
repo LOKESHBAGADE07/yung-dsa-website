@@ -3,7 +3,7 @@ import "@/App.css";
 import { ArrowDown, ArrowUpRight, Check, Instagram, Menu, Play, X, Youtube } from "lucide-react";
 import { bio, featuredVideos, images, latestRelease, links, platforms, press, releases, spotifyEmbed, ytEmbed, ytThumb, ytWatch } from "./content";
 
-const nav = ["Music", "Videos", "Shows", "About", "Gallery", "Press", "Concept"];
+const nav = ["Music", "Videos", "Shows", "About", "Style", "Press", "Concept"];
 const ext = { target: "_blank", rel: "noopener noreferrer" };
 const thumb = (item) => ytThumb(item.youtubeId, item.thumbQuality);
 
@@ -16,8 +16,8 @@ function App() {
     <header className="nav-bar" data-testid="site-navigation">
       <div className="nav-inner container">
         <button className="brand-mark" data-testid="home-logo-button" onClick={() => scrollTo("home")}>YUNG<span>DSA</span></button>
-        <nav className={menuOpen ? "nav-links open" : "nav-links"}>{nav.map((item) => <button key={item} data-testid={`nav-${item.toLowerCase()}-link`} onClick={() => scrollTo(item.toLowerCase())}>{item}</button>)}</nav>
-        <button className="nav-book" data-testid="nav-booking-button" onClick={() => scrollTo("concept")}>ABOUT THIS CONCEPT <ArrowUpRight size={15} /></button>
+        <nav className={menuOpen ? "nav-links open" : "nav-links"}>{nav.map((item) => item === "Style" ? <a key={item} href="/style/" data-testid="nav-style-link">Style</a> : <button key={item} data-testid={`nav-${item.toLowerCase()}-link`} onClick={() => scrollTo(item.toLowerCase())}>{item}</button>)}</nav>
+        <a className="nav-book" data-testid="nav-style-finder-button" href="/style/">STYLE FINDER <ArrowUpRight size={15} /></a>
         <button className="menu-button" data-testid="mobile-menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle navigation">{menuOpen ? <X size={22} /> : <Menu size={22} />}</button>
       </div>
     </header>
@@ -31,10 +31,16 @@ function App() {
             <p className="eyebrow reveal">INDEPENDENT FAN-MADE CONCEPT</p>
             <h1 className="hero-title reveal delay-1">YUNG<br /><em>DSA</em></h1>
             <p className="hero-sub reveal delay-2">PUNE 06 <span>/</span> INDIAN HIP-HOP</p>
-            <div className="hero-actions reveal delay-3"><button className="button button-red" data-testid="hero-listen-button" onClick={() => scrollTo("music")}>LISTEN NOW <ArrowUpRight size={16} /></button><button className="button button-ghost" data-testid="hero-booking-button" onClick={() => scrollTo("concept")}>ABOUT THIS CONCEPT <ArrowUpRight size={16} /></button></div>
+            <div className="hero-actions reveal delay-3"><button className="button button-red" data-testid="hero-listen-button" onClick={() => scrollTo("music")}>LISTEN NOW <ArrowUpRight size={16} /></button><a className="button button-ghost" data-testid="hero-style-button" href="/style/">EXPLORE STYLE <ArrowUpRight size={16} /></a></div>
           </div>
           <div className="hero-foot"><span className="hero-scroll"><ArrowDown size={14} /> SCROLL</span></div>
         </div>
+      </section>
+
+
+      <section className="style-launch section-pad" id="style" data-testid="style-finder-section">
+        <div><p className="eyebrow">NEW / INDEPENDENT STYLE GUIDE</p><h2>FIND THE FIT.<br /><em>KNOW THE SOURCE.</em></h2><p className="muted-copy">Explore sunglasses and baggy lowers with checked retailer links, fit notes and clear labels. Current picks are similar styles, not confirmed artist-worn items.</p><a className="button button-red" href="/style/">OPEN STYLE FINDER <ArrowUpRight size={17} /></a></div>
+        <div className="style-launch-guides"><a href="/style/goggles-sunglasses/"><span>01 / EYEWEAR</span><strong>Goggles &amp; sunglasses</strong><ArrowUpRight size={22} /></a><a href="/style/baggy-lowers/"><span>02 / SILHOUETTE</span><strong>Baggy lowers</strong><ArrowUpRight size={22} /></a><a href="/style/looks/"><span>03 / EVIDENCE</span><strong>The look journal</strong><ArrowUpRight size={22} /></a></div>
       </section>
 
       <section className="release-feature section-pad" id="music" data-testid="latest-release-section"><div className="section-kicker"><span>01</span> LATEST RELEASE</div><div className="release-grid"><div className="release-art-wrap"><button className="art-play" data-testid="latest-release-play-button" onClick={() => setVideo(latestRelease)}><img src={ytThumb(latestRelease.youtubeId)} alt={`${latestRelease.title} official video still`} data-testid="latest-release-artwork" /><span className="play-ring"><Play fill="white" size={22} /></span></button></div><div className="release-copy"><p className="eyebrow">OUT NOW / OFFICIAL RELEASE</p><h2 data-testid="latest-release-title">{latestRelease.title}</h2><p className="release-meta">{latestRelease.type} <span>/</span> {latestRelease.year}</p><p className="muted-copy">{latestRelease.detail}</p><a className="button button-outline" data-testid="latest-release-listen-button" href={ytWatch(latestRelease.youtubeId)} {...ext}>WATCH ON YOUTUBE <ArrowUpRight size={17} /></a><div className="platform-row"><span>ALSO ON</span><a data-testid="latest-platform-spotify" href={links.spotify} {...ext}>Spotify</a><a data-testid="latest-platform-apple-music" href={links.appleMusic} {...ext}>Apple Music</a></div></div></div></section>
@@ -56,9 +62,10 @@ function App() {
 
       <section className="follow-section" data-testid="follow-section"><p className="eyebrow">OFFICIAL CHANNELS</p><h2>FOLLOW THE<br /><em>MOVEMENT.</em></h2><div className="follow-links">{platforms.map((platform) => <a key={platform.name} data-testid={`social-${platform.name.toLowerCase().replace(" ", "-")}-link`} href={platform.url} {...ext}>{platform.name === "Instagram" ? <Instagram size={20} /> : platform.name === "YouTube" ? <Youtube size={20} /> : <span className="platform-symbol">◉</span>}{platform.name}<ArrowUpRight size={16} /></a>)}</div></section>
     </main>
-    <footer className="footer"><div className="footer-brand">YUNG<span>DSA</span><small>PUNE 06 / INDIAN HIP-HOP</small></div><div className="footer-links">{["Music", "Shows", "Press", "Concept"].map((item) => <button key={item} data-testid={`footer-${item.toLowerCase()}-link`} onClick={() => scrollTo(item.toLowerCase())}>{item}</button>)}</div><p className="creator-credit">Independent concept by <a href="https://www.linkedin.com/in/lokeshbagade/" {...ext}>Lokesh Bagade</a>.<br />Artist content belongs to its respective rights holders.</p></footer>
+    <footer className="footer"><div className="footer-brand">YUNG<span>DSA</span><small>PUNE 06 / INDIAN HIP-HOP</small></div><div className="footer-links"><a href="/style/" data-testid="footer-style-link">Style Finder</a>{["Music", "Shows", "Press", "Concept"].map((item) => <button key={item} data-testid={`footer-${item.toLowerCase()}-link`} onClick={() => scrollTo(item.toLowerCase())}>{item}</button>)}</div><p className="creator-credit">Independent concept by <a href="https://www.linkedin.com/in/lokeshbagade/" {...ext}>Lokesh Bagade</a>.<br />Artist content belongs to its respective rights holders.</p></footer>
     {video && <div className="modal-backdrop" data-testid="video-modal" onClick={() => setVideo(null)}><div className="video-modal" onClick={(e) => e.stopPropagation()}><button data-testid="video-modal-close" onClick={() => setVideo(null)}><X /></button><iframe data-testid="video-modal-player" src={ytEmbed(video.youtubeId)} title={`${video.title} — official music video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /><div><p>OFFICIAL MUSIC VIDEO / {video.year}</p><h3 data-testid="video-modal-title">{video.title}</h3><a className="button button-red" data-testid="video-modal-youtube-link" href={ytWatch(video.youtubeId)} {...ext}>OPEN ON YOUTUBE <ArrowUpRight size={16} /></a></div></div></div>}
   </div>;
 }
 
 export default App;
+
