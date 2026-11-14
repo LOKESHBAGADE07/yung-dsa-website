@@ -1,0 +1,36 @@
+name: Website build and SEO checks
+on:
+  push:
+    branches: [main, feat/google-seo-starter-guide]
+    paths: ['frontend/**', 'vercel.json', '.github/workflows/website.yml']
+permissions:
+  contents: read
+concurrency:
+  group: website-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+          cache: yarn
+          cache-dependency-path: frontend/yarn.lock
+      - name: Install existing locked dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build, prerender and verify SEO and hydration
+        run: yarn build
+      - name: Verify style filtering and static guides
+        run: yarn test:style
+      - name: Observe public HTTP routes
+        if: always()
+        continue-on-error: true
+        run: node scripts/check-live-seo.cjs

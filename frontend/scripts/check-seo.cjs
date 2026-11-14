@@ -61,6 +61,11 @@ assert.ok(!pages.some(p=>p.path==="/404.html"));
 const config=JSON.parse(fs.readFileSync(path.join(root,"../vercel.json"),"utf8"));
 assert.equal(config.framework,null,"Use static output routing; do not fall back to the homepage for unknown URLs");
 assert.equal(config.trailingSlash,true);
+const frontendConfig=JSON.parse(fs.readFileSync(path.join(root,"vercel.json"),"utf8"));
+assert.equal(frontendConfig.framework,null);
+assert.equal(frontendConfig.outputDirectory,"build");
+assert.deepEqual(frontendConfig.redirects,config.redirects);
+assert.deepEqual(frontendConfig.rewrites,config.rewrites);
 for(const rule of config.redirects){
  assert.ok(rule.source!==rule.destination,"Redirect loop");
  assert.ok(docs.has(rule.destination),"Redirect target missing");

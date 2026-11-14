@@ -22,7 +22,7 @@ npm run test:seo checks an existing build.
 The prerender loader uses Babel, JSX and CommonJS transforms already installed by react-scripts. It strips stylesheet imports only for server rendering. Client CSS still uses the normal CRA pipeline. The hydration smoke test uses jsdom from the existing Jest toolchain and runs the real client entry. It does not replace visual browser QA.
 
 ## Hosting
-The explicit CRA build/install commands and frontend/build output directory stay unchanged. framework:null selects static hosting instead of a single-page fallback, so unknown paths can return 404. Known style routes rewrite to their HTML files. trailingSlash:true leaves paths with file extensions intact. Index aliases redirect permanently.
+Vercel deployment metadata identifies frontend as the configured project root. frontend/vercel.json explicitly builds with yarn build and serves build. The repository-root config retains its equivalent cd frontend commands and frontend/build output for root-based deployments; both share canonical routing. framework:null selects static hosting instead of a single-page fallback, so unknown paths can return 404. Known style routes rewrite to their HTML files. trailingSlash:true leaves paths with file extensions intact. Index aliases redirect permanently.
 
 ## Follow-up in Search Console
 Inspect the homepage and guide URLs with URL Inspection, check the chosen canonical and rendered page, and confirm sitemap.xml is fetched. A successful deployment or source test does not prove Google indexing. Search Console inspection, rich-result eligibility and live HTTP status verification must be reported separately from build checks.
