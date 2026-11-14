@@ -1,93 +1,130 @@
 {
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=31536000; includeSubDomains; preload"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://assets.emergent.sh https://ap.emergent.sh; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://www.youtube-nocookie.com https://open.spotify.com; worker-src 'self' blob:;"
-        }
-      ]
-    }
-  ],
   "buildCommand": "yarn build",
   "outputDirectory": "build",
   "installCommand": "yarn install",
   "framework": null,
-  "trailingSlash": true,
-  "redirects": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
     {
-      "source": "/index.html",
-      "destination": "/",
-      "permanent": true
+      "src": "^/.*$",
+      "headers": {
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-XSS-Protection": "1; mode=block",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://assets.emergent.sh https://ap.emergent.sh; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-src 'self' https://www.youtube-nocookie.com https://open.spotify.com; worker-src 'self' blob:;"
+      },
+      "continue": true
     },
     {
-      "source": "/style/index.html",
-      "destination": "/style/",
-      "permanent": true
+      "src": "^/index\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/"
+      }
     },
     {
-      "source": "/style/goggles-sunglasses/index.html",
-      "destination": "/style/goggles-sunglasses/",
-      "permanent": true
+      "src": "^/style/index\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/"
+      }
     },
     {
-      "source": "/style/baggy-lowers/index.html",
-      "destination": "/style/baggy-lowers/",
-      "permanent": true
+      "src": "^/style/goggles-sunglasses/index\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/goggles-sunglasses/"
+      }
     },
     {
-      "source": "/style/looks/index.html",
-      "destination": "/style/looks/",
-      "permanent": true
+      "src": "^/style/baggy-lowers/index\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/baggy-lowers/"
+      }
     },
     {
-      "source": "/style/about/index.html",
-      "destination": "/style/about/",
-      "permanent": true
+      "src": "^/style/looks/index\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/looks/"
+      }
+    },
+    {
+      "src": "^/style/about/index\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/about/"
+      }
+    },
+    {
+      "src": "^/style$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/"
+      }
+    },
+    {
+      "src": "^/style/goggles-sunglasses$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/goggles-sunglasses/"
+      }
+    },
+    {
+      "src": "^/style/baggy-lowers$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/baggy-lowers/"
+      }
+    },
+    {
+      "src": "^/style/looks$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/looks/"
+      }
+    },
+    {
+      "src": "^/style/about$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/about/"
+      }
+    },
+    {
+      "src": "^/$",
+      "dest": "/index.html"
+    },
+    {
+      "src": "^/style/$",
+      "dest": "/style/index.html"
+    },
+    {
+      "src": "^/style/goggles-sunglasses/$",
+      "dest": "/style/goggles-sunglasses/index.html"
+    },
+    {
+      "src": "^/style/baggy-lowers/$",
+      "dest": "/style/baggy-lowers/index.html"
+    },
+    {
+      "src": "^/style/looks/$",
+      "dest": "/style/looks/index.html"
+    },
+    {
+      "src": "^/style/about/$",
+      "dest": "/style/about/index.html"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "^/.*$",
+      "status": 404,
+      "dest": "/404.html"
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/style/",
-      "destination": "/style/index.html"
-    },
-    {
-      "source": "/style/goggles-sunglasses/",
-      "destination": "/style/goggles-sunglasses/index.html"
-    },
-    {
-      "source": "/style/baggy-lowers/",
-      "destination": "/style/baggy-lowers/index.html"
-    },
-    {
-      "source": "/style/looks/",
-      "destination": "/style/looks/index.html"
-    },
-    {
-      "source": "/style/about/",
-      "destination": "/style/about/index.html"
-    }
-  ],
-  "$schema": "https://openapi.vercel.sh/vercel.json"
+  ]
 }

@@ -1,7 +1,6 @@
 name: Website build and SEO checks
 on:
   push:
-    branches: [main, feat/google-seo-starter-guide]
     paths: ['frontend/**', 'vercel.json', '.github/workflows/website.yml']
 permissions:
   contents: read

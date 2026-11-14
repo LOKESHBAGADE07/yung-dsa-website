@@ -60,18 +60,26 @@ assert.equal(missing.querySelector('meta[name="robots"]').content,"noindex");
 assert.ok(!pages.some(p=>p.path==="/404.html"));
 const config=JSON.parse(fs.readFileSync(path.join(root,"../vercel.json"),"utf8"));
 assert.equal(config.framework,null,"Use static output routing; do not fall back to the homepage for unknown URLs");
-assert.equal(config.trailingSlash,true);
 const frontendConfig=JSON.parse(fs.readFileSync(path.join(root,"vercel.json"),"utf8"));
 assert.equal(frontendConfig.framework,null);
 assert.equal(frontendConfig.outputDirectory,"build");
-assert.deepEqual(frontendConfig.redirects,config.redirects);
-assert.deepEqual(frontendConfig.rewrites,config.rewrites);
-for(const rule of config.redirects){
- assert.ok(rule.source!==rule.destination,"Redirect loop");
- assert.ok(docs.has(rule.destination),"Redirect target missing");
- assert.equal(rule.permanent,true);
+assert.deepEqual(frontendConfig.routes,config.routes);
+assert.ok(!config.redirects&&!config.rewrites&&!config.headers&&!config.trailingSlash);
+const filePhase=config.routes.findIndex(r=>r.handle==="filesystem");
+assert.ok(filePhase>0);
+assert.deepEqual(config.routes.at(-1),{src:"^/.*$",status:404,dest:"/404.html"});
+for(const rule of config.routes.filter(r=>r.status===308)){
+ assert.ok(docs.has(rule.headers.Location),"Redirect target missing");
+ assert.ok(!new RegExp(rule.src).test(rule.headers.Location),"Redirect loop");
 }
-for(const rule of config.rewrites)assert.ok(fs.existsSync(path.join(output,rule.destination)));
+for(const p of pages.filter(p=>p.file.endsWith("index.html"))){
+ const rule=config.routes.find(r=>r.dest==="/"+p.file&&!r.status);
+ assert.ok(rule&&new RegExp(rule.src).test(p.path),"Missing explicit page route");
+}
+for(const file of ["404.html","robots.txt","sitemap.xml"]){
+ assert.ok(fs.existsSync(path.join(output,file)),"Missing static asset");
+ assert.ok(!config.routes.slice(0,filePhase).some(r=>r.dest&&new RegExp(r.src).test("/"+file)));
+}
 console.log("SEO checks passed: 7 canonical pages, static content, links, images, structured data, sitemap and 404 configuration.");
 async function hydrateCheck(){
  const dom=new JSDOM(read("index.html"),{url:"https://yungdsa.com/",pretendToBeVisual:true});
