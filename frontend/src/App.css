@@ -181,3 +181,16 @@
 @media(max-width:900px){.style-launch{grid-template-columns:1fr;gap:30px}}
 @media(max-width:640px){.style-launch{padding-top:52px;padding-bottom:52px}.style-launch h2{font-size:clamp(23px,6.5vw,35px)}.style-launch-guides strong{font-size:18px}.nav-links.open a{padding:12px 0}}
 
+
+/* Native links remain useful before hydration and when JavaScript is disabled. */
+.brand-mark,.art-play,.release-row,.video-card{text-decoration:none;color:inherit}
+.release-row{text-align:left}.art-play{display:block}.art-play img{height:auto}
+.nav-links a,.footer-links a{text-transform:uppercase}
+.skip-to-content{position:fixed;left:12px;top:-100px;background:#d7f294;color:#111;padding:12px 18px;z-index:100}
+.skip-to-content:focus{top:12px}
+.site-shell a:focus-visible,.site-shell button:focus-visible{outline:3px solid #d7f294;outline-offset:5px}
+.bio-source a{text-decoration:underline;text-underline-offset:4px}
+html{scroll-padding-top:100px}
+@media(max-width:900px){.nav-links.open a{padding:12px 0}html:not([data-js]) .menu-button{display:none}html:not([data-js]) .nav-inner{flex-wrap:wrap}html:not([data-js]) .nav-links{position:static;display:flex;flex-wrap:wrap;width:100%;padding:14px 0;gap:18px;transform:none;opacity:1;visibility:visible}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+

@@ -1,0 +1,44 @@
+[
+  {
+    "path": "/",
+    "file": "index.html",
+    "label": "Home",
+    "updated": "2026-11-14"
+  },
+  {
+    "path": "/press-kit.html",
+    "file": "press-kit.html",
+    "label": "Artist biography",
+    "updated": "2026-11-14"
+  },
+  {
+    "path": "/style/",
+    "file": "style/index.html",
+    "label": "Style Finder",
+    "updated": "2026-11-14"
+  },
+  {
+    "path": "/style/goggles-sunglasses/",
+    "file": "style/goggles-sunglasses/index.html",
+    "label": "Goggles & sunglasses",
+    "updated": "2026-11-14"
+  },
+  {
+    "path": "/style/baggy-lowers/",
+    "file": "style/baggy-lowers/index.html",
+    "label": "Baggy lowers",
+    "updated": "2026-11-14"
+  },
+  {
+    "path": "/style/looks/",
+    "file": "style/looks/index.html",
+    "label": "Look journal",
+    "updated": "2026-11-14"
+  },
+  {
+    "path": "/style/about/",
+    "file": "style/about/index.html",
+    "label": "About the guide",
+    "updated": "2026-11-14"
+  }
+]

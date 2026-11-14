@@ -15,13 +15,21 @@ const queryClient = new QueryClient({
   },
 });
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
+const container = document.getElementById("root");
+document.documentElement.dataset.js = "true";
+const application = (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <App />
       <Analytics />
       <SpeedInsights />
     </QueryClientProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
+
+if (container.dataset.prerendered === "true") {
+  ReactDOM.hydrateRoot(container, application);
+} else {
+  ReactDOM.createRoot(container).render(application);
+}
+

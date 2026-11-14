@@ -71,10 +71,11 @@ test("all static pages have unique titles, one h1, canonical, disclosure, valid 
   assert.match(doc,/Not affiliated with or endorsed by Yung DSA or his team/);
   assert.match(doc,/https:\/\/www.linkedin.com\/in\/lokeshbagade\//);
   const ld=JSON.parse(doc.match(/<script type="application\/ld\+json">(.*?)<\/script>/s)[1]);
-  assert.equal(ld.url,"https://yungdsa.com"+route); assert.notEqual(ld["@type"],"Product");
+  assert.equal(ld["@graph"][0].url,"https://yungdsa.com"+route); assert.notEqual(ld["@graph"][0]["@type"],"Product");
+  const crumbs=ld["@graph"].find(n=>n["@type"]==="BreadcrumbList");assert.ok(crumbs);assert.equal(crumbs.itemListElement.at(-1).item,"https://yungdsa.com"+route);
   const ids=Array.from(doc.matchAll(/\sid="([^"]+)"/g),m=>m[1]);assert.equal(ids.length,new Set(ids).size);
   for(const match of doc.matchAll(/<a\b[^>]*>/g)) {
-   if(match[0].includes('target="_blank"')) assert.match(match[0],/rel="noopener noreferrer"/);
+   if(match[0].includes('target="_blank"')) assert.match(match[0],/rel="(?:nofollow )?noopener noreferrer"/);
   }
  }
 });

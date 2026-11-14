@@ -2,5 +2,62 @@
   "buildCommand": "cd frontend && yarn build",
   "outputDirectory": "frontend/build",
   "installCommand": "cd frontend && yarn install",
-  "framework": "create-react-app"
+  "framework": null,
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/style/index.html",
+      "destination": "/style/",
+      "permanent": true
+    },
+    {
+      "source": "/style/goggles-sunglasses/index.html",
+      "destination": "/style/goggles-sunglasses/",
+      "permanent": true
+    },
+    {
+      "source": "/style/baggy-lowers/index.html",
+      "destination": "/style/baggy-lowers/",
+      "permanent": true
+    },
+    {
+      "source": "/style/looks/index.html",
+      "destination": "/style/looks/",
+      "permanent": true
+    },
+    {
+      "source": "/style/about/index.html",
+      "destination": "/style/about/",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/style/",
+      "destination": "/style/index.html"
+    },
+    {
+      "source": "/style/goggles-sunglasses/",
+      "destination": "/style/goggles-sunglasses/index.html"
+    },
+    {
+      "source": "/style/baggy-lowers/",
+      "destination": "/style/baggy-lowers/index.html"
+    },
+    {
+      "source": "/style/looks/",
+      "destination": "/style/looks/index.html"
+    },
+    {
+      "source": "/style/about/",
+      "destination": "/style/about/index.html"
+    }
+  ]
 }
+

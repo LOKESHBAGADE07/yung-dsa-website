@@ -21,7 +21,7 @@ export const images = {
 };
 
 export const bio =
-  "YUNG DSA (Harsh Vijay Machare) is a breakout rapper from Pune 06, representing Yerwada and the modern wave of Indian hip-hop. From early street anthems like YUNG SITAR and STRAIGHT OUTTA YERWADA to viral hit YEDA YUNG on Gully Gang Records, Sony Music India release MAAF KAR, and his headline-grabbing appearances on Bigg Boss 20, Yung DSA brings raw Pune grit, sharp rhymes, and unyielding hustle to Indian hip-hop — no shortcuts.";
+  "YUNG DSA (Harsh Vijay Machare) is a rapper from Yerwada, Pune 06. His music includes YUNG SITAR, STRAIGHT OUTTA YERWADA, YEDA YUNG on Gully Gang Records and MAAF KAR on Sony Music India. Explore the releases below, or follow the linked artist channels for current updates.";
 
 export const latestRelease = {
   title: "FACHADI",
@@ -55,12 +55,6 @@ export const press = [
     year: "2025",
     url: "https://rollingstoneindia.com/yung-dsa-interview-maaf-kar-yeda-yung/",
   },
-  {
-    outlet: "BIGG BOSS 20 & INDIAN MEDIA",
-    headline: "Yung DSA Represents Pune 06 & Desi Hip-Hop On National Television",
-    year: "2026",
-    url: "https://www.instagram.com/yung_dsa/",
-  },
 ];
 
 export const platforms = [
@@ -69,4 +63,5 @@ export const platforms = [
   { name: "Spotify", url: links.spotify },
   { name: "Apple Music", url: links.appleMusic },
 ];
+
 
