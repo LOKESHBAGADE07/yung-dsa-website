@@ -66,8 +66,10 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "prebuild": "node scripts/build-style.cjs",
-    "test:style": "node --test scripts/style.test.cjs"
+    "prebuild": "node scripts/build-style.cjs && node scripts/build-seo.cjs",
+    "test:style": "node --test scripts/style.test.cjs",
+    "postbuild": "node scripts/prerender-home.cjs && node scripts/check-seo.cjs",
+    "test:seo": "node scripts/check-seo.cjs"
   },
   "browserslist": {
     "production": [
