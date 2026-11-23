@@ -14,3 +14,5 @@
 .studio-page .model-stage{min-height:0;background:none;overflow:visible}.model-sticky{position:sticky;top:88px;height:clamp(430px,calc(100svh - 112px),650px);background:radial-gradient(ellipse at 50% 42%,#fafbfd 0%,#eaebee95 48%,transparent 73%)}.studio-page .model-view{inset:30px -25px 68px;min-height:0}.studio-page .stage-word{top:60px;font-size:clamp(80px,8.5vw,130px)}.studio-page .stage-bottom{bottom:8px}.studio-page .stage-top{top:13px}
 @media(max-width:850px){.model-sticky{position:relative;top:0;height:570px}.studio-page .model-view{inset:30px -12px 68px}}
 @media(max-width:560px){.model-sticky{height:490px}.studio-page .model-view{inset:24px 0 68px}.studio-page .stage-word{font-size:110px;top:60px}.studio-page .stage-top{top:20px}}
+
+.studio-page .studio{overflow:clip}
