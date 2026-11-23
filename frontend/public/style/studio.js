@@ -10,7 +10,7 @@
  function update(){
   const preset=core.presetName(state);all('[data-preset]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.preset===preset)));all('[data-top]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.top===state.top)));
   $('[data-look-title]').textContent=preset?core.presets[preset].name:'Your remix';$('[data-look-description]').textContent=preset?core.presets[preset].description:'Your frames. Your silhouette. Your own combination.';
-  for(const category of ['eyewear','lowers']){const product=products.find(p=>p.id===state[category]);$('[data-look-select="'+category+'"]').value=product.id;const link=$('[data-look-link="'+category+'"]');link.href=product.url;link.dataset.retailerId=product.id;link.dataset.merchant=product.merchant;link.setAttribute('aria-label','View '+product.name+' photos and sizes at '+product.merchant+' (opens in a new tab)');}
+  for(const category of ['eyewear','lowers']){const product=products.find(p=>p.id===state[category]);$('[data-look-select="'+category+'"]').value=product.id;const link=$('[data-look-link="'+category+'"]');link.href=product.url;const picture=$('[data-look-image="'+category+'"]');picture.src=product.image;picture.alt=product.name+' — retailer product photo';link.dataset.retailerId=product.id;link.dataset.merchant=product.merchant;link.setAttribute('aria-label','View '+product.name+' photos and sizes at '+product.merchant+' (opens in a new tab)');}
   $('[data-look-total]').textContent=money(core.total(state,products));avatar?.update(state);
   all('[data-add-look]').forEach(button=>{const selected=state[button.dataset.category]===button.dataset.addLook;button.textContent=selected?'In your look':'Style this piece';button.setAttribute('aria-pressed',String(selected));});
   $('[data-share-fallback]').hidden=true;
@@ -27,6 +27,7 @@
  window.addEventListener('hashchange',()=>{const shared=core.decode(location.hash,products);if(shared)change(shared,'Shared look loaded. Make it yours.');});
  all('[data-model-action]').forEach(button=>{button.disabled=true;button.addEventListener('click',()=>{if(!avatar)return;const spinning=avatar.action(button.dataset.modelAction);spinButton.setAttribute('aria-pressed',String(spinning));spinButton.textContent=spinning?'Pause spin':'Auto spin';});});
  $('#model-view').addEventListener('studio:spin-stop',()=>{spinButton.setAttribute('aria-pressed','false');spinButton.textContent='Auto spin';});
+ all('[data-product-photo]').forEach(img=>{const fail=()=>{img.hidden=true;img.parentElement.classList.remove('has-photo');img.parentElement.querySelector('.sketch-label').textContent='Photo unavailable · View retailer photos';};img.addEventListener('error',fail);if(img.complete&&!img.naturalWidth)fail();});
  update();
  // Lazy-load the renderer only on the studio page. Shopping works if WebGL or the module fails.
  import('./avatar.js').then(({mountAvatar})=>{avatar=mountAvatar($('#model-view'),state);all('[data-model-action]').forEach(button=>button.disabled=false);window.addEventListener('pagehide',event=>{if(!event.persisted)avatar.destroy();},{once:true});}).catch(()=>{$('[data-model-status]').textContent='3D is unavailable in this browser. You can still build, save and share your look.';$('#model-help').textContent='Outfit controls work without 3D.';});

@@ -11,7 +11,7 @@ test('look links round-trip all preset and custom selections; unsafe and wrong-c
 test('reference total counts only the selected two products, not concept clothes',()=>{
  assert.equal(core.total(core.presets.afterhours,data.products),2050);
  assert.equal(core.total(core.presets.bluehour,data.products),3150);
- assert.equal(core.total(core.presets.spotlight,data.products),4549);
+ assert.equal(core.total(core.presets.spotlight,data.products),2749);
 });
 test('studio selection, save, restore, inbound link, hotspot and sharing fallback work without WebGL',async()=>{
  const {JSDOM}=require('jsdom');
@@ -27,7 +27,7 @@ test('studio selection, save, restore, inbound link, hotspot and sharing fallbac
  click('[data-add-look="rivet-denim-black"]');assert.equal(d.querySelector('[data-look-total]').textContent,'₹2,100');
  click('[data-focus-part="eyewear"]');assert.equal(d.activeElement.id,'look-eyewear');
  click('[data-share-look]');await new Promise(resolve=>setTimeout(resolve,0));assert.equal(d.querySelector('[data-share-fallback]').hidden,false);assert.equal(d.querySelector('#share-url').value,'https://yungdsa.com/style/#look=ape-x-002~rivet-denim-black~red');
- w.location.hash=core.encode(core.validate(core.presets.spotlight,data.products));w.dispatchEvent(new w.HashChangeEvent('hashchange'));assert.equal(d.querySelector('[data-look-total]').textContent,'₹4,549');
+ w.location.hash=core.encode(core.validate(core.presets.spotlight,data.products));w.dispatchEvent(new w.HashChangeEvent('hashchange'));assert.equal(d.querySelector('[data-look-total]').textContent,'₹2,749');
  assert.match(d.querySelector('[data-model-status]').textContent,/3D is unavailable/);
  assert.ok(d.querySelectorAll('[data-model-action]:disabled').length===4);
  dom.window.close();

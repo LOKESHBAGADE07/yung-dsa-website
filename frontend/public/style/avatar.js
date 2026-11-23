@@ -22,7 +22,7 @@ export function createAvatar(){
  for(const side of [-1,1]){const shoulder=[side*.63,3.84,0],elbow=[side*.83,3.28,.01],wrist=[side*.74,2.78,.12];capsule(shoulder,elbow,.235,cloth);capsule(elbow,wrist,.19,cloth);capsule([side*.76,2.9,.1],wrist,.175,cuff);sphere(skin,[side*.73,2.58,.14],[.145,.23,.13]);for(let finger=0;finger<3;finger++)tube([[side*(.66+finger*.045),2.58,.24],[side*(.67+finger*.045),2.44,.21]],.008,lip);tube([[side*.65,3.99,.12],[side*.8,3.67,.18]],.009,seam);}
  garment([[.575,0],[.58,.055],[.57,.11]],.61,cuff,[0,2.56,0]);
  // Neck, ears and shaped jaw. The intentionally stylised proportions are a collectible sculpture.
- capsule([0,4.0,0],[0,4.42,0],.18,skin);
+ capsule([0,4.0,0],[0,4.22,0],.18,skin);
  const head=add(new THREE.SphereGeometry(1,40,28),skin,[0,4.87,0],[.365,.49,.325]);
  const hp=head.geometry.attributes.position;for(let i=0;i<hp.count;i++){const y=hp.getY(i);if(y<-.15){const f=1+(y+.15)*.2;hp.setX(i,hp.getX(i)*f);}}head.geometry.computeVertexNormals();
  sphere(skin,[0,4.61,.15],[.25,.2,.2]);
@@ -38,16 +38,17 @@ export function createAvatar(){
  function shield(x){const shape=new THREE.Shape();shape.moveTo(-.18,.06);shape.lineTo(.16,.055);shape.quadraticCurveTo(.2,.015,.15,-.085);shape.lineTo(-.12,-.09);shape.quadraticCurveTo(-.19,-.04,-.18,.06);const outer=add(new THREE.ExtrudeGeometry(shape,{depth:.027,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.014,bevelThickness:.008}),frame,[x,0,0],null,glasses);outer.rotation.y=x<0?.22:-.22;const inset=add(new THREE.ShapeGeometry(shape),lens,[x,0,.046],[.86,.72,1],glasses);inset.rotation.y=outer.rotation.y;}
  shield(-.19);shield(.19);capsule([-.045,.01,.04],[.045,.01,.04],.018,frame,glasses);for(const side of [-1,1])tube([[side*.34,.015,0],[side*.39,.02,-.17],[side*.37,-.03,-.32]],.022,frame,glasses);
  // Individual chain links hang over the top rather than being a flat decal.
- for(let i=0;i<31;i++){const t=i/30*Math.PI;const x=Math.cos(t)*.265,y=4.14-Math.sin(t)*.37,z=.16+Math.sin(t)*.205;const link=add(new THREE.TorusGeometry(.033,.009,6,10),silver,[x,y,z]);link.rotation.z=-t;link.rotation.y=i%2?.75:0;}
- const pendant=add(new THREE.BoxGeometry(.1,.16,.025),silver,[0,3.68,.385]);pendant.rotation.z=.2;
+ for(let i=0;i<31;i++){const t=i/30*Math.PI;const x=Math.cos(t)*.265,y=4.14-Math.sin(t)*.37,z=.23+Math.sin(t)*.205;const link=add(new THREE.TorusGeometry(.033,.009,6,10),silver,[x,y,z]);link.rotation.z=-t;link.rotation.y=i%2?.75:0;}
+ const pendant=add(new THREE.BoxGeometry(.1,.16,.025),silver,[0,3.68,.445]);pendant.rotation.z=.2;
  // Original embroidered fan-art mark, not a retail product/brand logo.
  const tagCanvas=document.createElement('canvas');tagCanvas.width=256;tagCanvas.height=128;const ctx=tagCanvas.getContext('2d');ctx.fillStyle='#dedbd3';ctx.font='700 80px Arial';ctx.textAlign='center';ctx.fillText('06',128,90);const texture=new THREE.CanvasTexture(tagCanvas);texture.colorSpace=THREE.SRGBColorSpace;add(new THREE.PlaneGeometry(.23,.115),new THREE.MeshStandardMaterial({map:texture,transparent:true,roughness:1}),[.3,3.75,.362]);
+ root.children.forEach(part=>{if(part.position.y>4.3)part.position.y-=.2;});
  const palette={black:'#25252b',cream:'#cfcabd',red:'#982c40',blue:'#465c79'};
  return {root,update(state){cloth.color.set(palette[state.top]||palette.black);cuff.color.copy(cloth.color).multiplyScalar(.69);const lowerColors={'rivet-denim-black':'#333640','waffle-pants':'#8babc0','1998-denim':'#4b6681'};denim.color.set(lowerColors[state.lowers]||lowerColors['rivet-denim-black']);seam.color.copy(denim.color).lerp(new THREE.Color('#cececb'),.3);frame.color.set(state.eyewear==='ape-x-002'?'#3963a1':state.eyewear==='cyclops-002'?'#e6e4d9':'#191d24');lens.color.set(state.eyewear==='cyclops-002'?'#463023':'#182633');}};
 }
 export function mountAvatar(container,initial){
  const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(31,1,.1,60);camera.position.set(0,3.15,11.1);camera.lookAt(0,2.68,0);
- const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.65));renderer.setClearColor(0,0);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.38;
+ const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.65));renderer.setClearColor(0,0);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
  renderer.domElement.setAttribute('aria-hidden','true');container.appendChild(renderer.domElement);
  scene.add(new THREE.HemisphereLight('#eaf1ff','#756b65',2.6));const key=new THREE.DirectionalLight('#fff4e4',4.5);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-4;key.shadow.camera.right=4;key.shadow.camera.top=6;key.shadow.camera.bottom=-4;key.shadow.normalBias=.035;scene.add(key);const rim=new THREE.DirectionalLight('#b9d2ff',3.5);rim.position.set(3,5,-3);scene.add(rim);const fill=new THREE.DirectionalLight('#f2b8c5',.7);fill.position.set(3,2,4);scene.add(fill);
  const avatar=createAvatar();avatar.update(initial);avatar.root.rotation.y=-.18;scene.add(avatar.root);
