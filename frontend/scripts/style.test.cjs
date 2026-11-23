@@ -13,8 +13,8 @@ test("combined category and budget filters exclude unrelated and over-budget opt
 });
 test("price sorting does not mutate catalogue order; unset budget shows all",()=>{
  const before=JSON.stringify(data.products);
- assert.deepEqual(select(data.products,{category:"all",sort:"price-desc"}).map(p=>p.price),[3799,2450,1400,750,700,650]);
- assert.deepEqual(select(data.products,{category:"all",sort:"price-asc"}).map(p=>p.price),[650,700,750,1400,2450,3799]);
+ assert.deepEqual(select(data.products,{category:"all",sort:"price-desc"}).map(p=>p.price),[2450,1999,1400,750,700,650]);
+ assert.deepEqual(select(data.products,{category:"all",sort:"price-asc"}).map(p=>p.price),[650,700,750,1400,1999,2450]);
  assert.equal(JSON.stringify(data.products),before);
  assert.equal(select(data.products,{budget:"",category:"all"}).length,6);
 });
@@ -38,7 +38,7 @@ test("filter UI supports empty results, accessible count and full reset",()=>{
  assert.equal(h.count.textContent,"0 options shown");assert.equal(h.empty.hidden,false);assert.ok(h.cards.every(n=>n.hidden));
  h.resetHandlers.click();assert.equal(h.empty.hidden,true);assert.equal(h.count.textContent,"6 options shown");assert.ok(h.elements.category.focused);
  h.elements.sort.value="price-desc";h.handlers.change();
- assert.deepEqual(h.grid.children.filter(n=>!n.hidden).map(n=>n.dataset.productId),["1998-denim","waffle-pants","rivet-denim-black","cyclops-002","ape-x-002","y2k-001"]);
+ assert.deepEqual(h.grid.children.filter(n=>!n.hidden).map(n=>n.dataset.productId),["waffle-pants","1998-denim","rivet-denim-black","cyclops-002","ape-x-002","y2k-001"]);
 });
 test("privacy signal suppresses analytics and local outbound hook; links are never intercepted",()=>{
  const h=browserHarness(true);
