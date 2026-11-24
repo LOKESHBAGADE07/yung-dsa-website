@@ -7,6 +7,7 @@ test('carousel wraps infinitely in both directions and chooses the nearest visua
  assert.equal(core.distance(1,7,3),0);
  assert.equal(core.snap(0,-180,0,260),1);assert.equal(core.snap(0,180,0,260),-1);
  assert.equal(core.snap(0,20,0,260),0);assert.equal(core.snap(0,-60,-2,260),1);
+ assert.equal(core.snap(0,-195,-5,157),1);assert.equal(core.snap(2,195,5,157),1);
 });
 test('only recognised shareable look IDs are restored',()=>{
  const looks=[{id:'after-dark'},{id:'studio-notes'},{id:'off-duty'}];
