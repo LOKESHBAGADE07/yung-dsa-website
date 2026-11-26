@@ -32,6 +32,11 @@ for(const p of pages){
   assert.ok(link.textContent.trim()||link.getAttribute("aria-label"),"Unnamed link: "+p.path);
   if(url.origin==="https://yungdsa.com"){
    const target=docs.get(url.pathname);
+   if(!target && url.pathname==="/wallpapers/assets/pune-06-fan-wallpaper.png"){
+    assert.ok(link.hasAttribute("download"),"Wallpaper links must offer a download");
+    assert.ok(fs.existsSync(path.join(output,url.pathname)),"Download asset is missing");
+    continue;
+   }
    assert.ok(target,"Internal page is missing: "+link.href);
    if(url.hash)assert.ok(target.getElementById(decodeURIComponent(url.hash.slice(1))),"Missing fragment: "+link.href);
   }
@@ -44,11 +49,19 @@ for(const p of pages){
 }
 const home=docs.get("/");
 assert.equal(home.querySelector("#root").dataset.prerendered,"true");
-assert.equal(home.querySelectorAll('a[data-testid^="release-card-"]').length,10);
+assert.equal(home.querySelectorAll('a[data-testid^="release-card-"]').length,11);
 assert.ok(home.querySelector('a[href="/style/goggles-sunglasses/"]'));
 assert.ok(home.querySelector('a[href="/style/baggy-lowers/"]'));
 assert.ok(home.querySelector('a[href="https://www.linkedin.com/in/lokeshbagade/"]'));
 assert.ok(!home.querySelector("noscript h1"));
+const editorial=require('../src/editorial.json');
+assert.equal(home.title,editorial.homeTitle);
+assert.equal(home.querySelector('meta[name="description"]').content,editorial.homeDescription);
+for(const faq of editorial.homeFaq)assert.ok(home.body.textContent.includes(faq.question)&&home.body.textContent.includes(faq.answer),'FAQ absent from prerendered HTML');
+for(const p of pages){
+ assert.ok(home.querySelector('footer a[href="'+p.path+'"]'),'Missing footer route '+p.path);
+ if(p.path!=='/')assert.ok(home.querySelector('main a[href="'+p.path+'"]'),'Missing body route '+p.path);
+}
 const artist=Array.from(home.querySelectorAll('script[type="application/ld+json"]')).flatMap(s=>JSON.parse(s.textContent)["@graph"]||[]).find(n=>n["@id"]==="https://yungdsa.com/#artist");
 assert.equal(artist["@type"],"Person");
 const sitemap=new JSDOM(read("sitemap.xml"),{contentType:"application/xml"}).window.document;
@@ -80,7 +93,7 @@ for(const file of ["404.html","robots.txt","sitemap.xml"]){
  assert.ok(fs.existsSync(path.join(output,file)),"Missing static asset");
  assert.ok(!config.routes.slice(0,filePhase).some(r=>r.dest&&new RegExp(r.src).test("/"+file)));
 }
-console.log("SEO checks passed: 7 canonical pages, static content, links, images, structured data, sitemap and 404 configuration.");
+console.log(`SEO checks passed: ${pages.length} canonical pages, static content, links, images, structured data, sitemap and 404 configuration.`);
 async function hydrateCheck(){
  const dom=new JSDOM(read("index.html"),{url:"https://yungdsa.com/",pretendToBeVisual:true});
  for(const name of ["window","document","navigator","HTMLElement","HTMLIFrameElement","Node","MutationObserver"])Object.defineProperty(globalThis,name,{value:dom.window[name],configurable:true,writable:true});
@@ -112,3 +125,4 @@ async function hydrateCheck(){
 }
 hydrateCheck().catch(error=>{console.error(error);process.exitCode=1;});
 })();
+

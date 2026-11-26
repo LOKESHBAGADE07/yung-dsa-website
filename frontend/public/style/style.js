@@ -1,13 +1,6 @@
 (function () {
   "use strict";
   var privacyOptOut = navigator.globalPrivacyControl === true || navigator.doNotTrack === "1";
-  if (!privacyOptOut) {
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-    var analytics = document.createElement("script");
-    analytics.defer = true;
-    analytics.src = "/_vercel/insights/script.js";
-    document.head.appendChild(analytics);
-  }
   var filter = document.querySelector("[data-style-filter]");
   if (filter && window.StyleFinder) {
     var grid = document.querySelector("[data-product-grid]");

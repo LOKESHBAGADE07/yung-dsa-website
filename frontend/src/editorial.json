@@ -1,0 +1,88 @@
+{
+  "reviewedAt": "2026-11-26",
+  "homeTitle": "Yung DSA (Harsh Machare) — Songs, Bigg Boss 20 & Style Guide",
+  "homeDescription": "Explore Yung DSA's songs including Hood Talk, his Yerwada Pune 06 roots, Bigg Boss 20 sources, and independent sunglasses, hoodie and baggy-lowers guides.",
+  "sources": {
+    "profile": "https://timesofindia.indiatimes.com/tv/news/hindi/from-financial-struggles-and-working-at-a-bpo-to-becoming-a-popular-rapper-bigg-boss-20s-yung-dsas-journey-rise-to-fame-and-more/photostory/134963971.cms",
+    "hoodTalk": "https://timesofindia.indiatimes.com/life-style/spotlight/keeping-it-local-keeping-it-raw-yung-dsa-brings-yerwadas-street-sound-to-hood-talk/articleshow/136021644.cms",
+    "interview": "https://www.indulgexpress.com/music/2026/Aug/28/from-pune-streets-to-hip-hops-future-yung-dsa-on-fachadi-fame-and-staying-true-to-his-sound",
+    "welcome": "https://www.youtube.com/watch?v=XTA_OgnN_8s",
+    "jiostar": "https://www.jiostar.com/news/bigg-boss-indias-original-reality-tv-phenomenon-crosses-100-crore-watch-time-hours-on-jiohotstar/",
+    "yeda": "https://www.youtube.com/watch?v=Ym4ti89tItw",
+    "rade": "https://www.youtube.com/watch?v=ZMQBrlntZEM",
+    "bape": "https://us.bape.com/products/1m80-115-302?variant=47780400758962",
+    "hoodieDiscussion": "https://www.reddit.com/r/BiggBoss20TathasTwo/comments/1xz9a7q/yung_dsa_hoodies_they_are_really_expensive/"
+  },
+  "homeFaq": [
+    {
+      "question": "What is Yung DSA's real name?",
+      "answer": "Yung DSA's real name is Harsh Vijay Machare. The Times of India's artist profile identifies him by that name.",
+      "source": "profile"
+    },
+    {
+      "question": "Does Yung DSA own a clothing brand or company?",
+      "answer": "We have not verified a retail clothing brand owned by him. Music-label credits and clothing partnerships are different from ownership: the official Yeda Yung video credits Gully Gang Records and names Urban Monkey and Bank of Brokes as clothing partners.",
+      "source": "yeda"
+    },
+    {
+      "question": "What hoodie did Yung DSA wear on Bigg Boss 20?",
+      "answer": "A fan discussion suggests a BAPE shark hoodie, but this guide has not confirmed the exact item, its authenticity or the circulating ₹92,000 price. Read the hoodie guide for the evidence and what to check before buying.",
+      "href": "/style/hoodies-brand/"
+    },
+    {
+      "question": "Where is Yung DSA from?",
+      "answer": "He is from Yerwada in Pune, Maharashtra. Pune 06 is part of his musical identity; his official video credits explicitly reference Yerwada 06.",
+      "source": "yeda"
+    }
+  ],
+  "guides": [
+    {
+      "path": "/",
+      "label": "Home"
+    },
+    {
+      "path": "/press-kit.html",
+      "label": "Artist biography"
+    },
+    {
+      "path": "/style/",
+      "label": "Style Finder"
+    },
+    {
+      "path": "/style/fit-check/",
+      "label": "06 Fit Check"
+    },
+    {
+      "path": "/style/goggles-sunglasses/",
+      "label": "Goggles & sunglasses"
+    },
+    {
+      "path": "/style/baggy-lowers/",
+      "label": "Baggy lowers"
+    },
+    {
+      "path": "/style/looks/",
+      "label": "Look journal"
+    },
+    {
+      "path": "/style/about/",
+      "label": "About the guide"
+    },
+    {
+      "path": "/style/hoodies-brand/",
+      "label": "Hoodies & brands"
+    },
+    {
+      "path": "/bigg-boss-20/",
+      "label": "Bigg Boss 20"
+    },
+    {
+      "path": "/slang-guide/",
+      "label": "Slang & songs"
+    },
+    {
+      "path": "/wallpapers/",
+      "label": "Fan wallpaper"
+    }
+  ]
+}
