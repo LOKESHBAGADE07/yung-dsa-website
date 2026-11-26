@@ -119,6 +119,78 @@
       "dest": "/style/about/index.html"
     },
     {
+      "src": "^/style/hoodies-brand/index\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/hoodies-brand/"
+      }
+    },
+    {
+      "src": "^/style/hoodies-brand$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/hoodies-brand/"
+      }
+    },
+    {
+      "src": "^/style/hoodies-brand/$",
+      "dest": "/style/hoodies-brand/index.html"
+    },
+    {
+      "src": "^/bigg-boss-20/index\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/bigg-boss-20/"
+      }
+    },
+    {
+      "src": "^/bigg-boss-20$",
+      "status": 308,
+      "headers": {
+        "Location": "/bigg-boss-20/"
+      }
+    },
+    {
+      "src": "^/bigg-boss-20/$",
+      "dest": "/bigg-boss-20/index.html"
+    },
+    {
+      "src": "^/slang-guide/index\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/slang-guide/"
+      }
+    },
+    {
+      "src": "^/slang-guide$",
+      "status": 308,
+      "headers": {
+        "Location": "/slang-guide/"
+      }
+    },
+    {
+      "src": "^/slang-guide/$",
+      "dest": "/slang-guide/index.html"
+    },
+    {
+      "src": "^/wallpapers/index\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/wallpapers/"
+      }
+    },
+    {
+      "src": "^/wallpapers$",
+      "status": 308,
+      "headers": {
+        "Location": "/wallpapers/"
+      }
+    },
+    {
+      "src": "^/wallpapers/$",
+      "dest": "/wallpapers/index.html"
+    },
+    {
       "handle": "filesystem"
     },
     {

@@ -24,15 +24,17 @@ export const bio =
   "YUNG DSA (Harsh Vijay Machare) is a rapper from Yerwada, Pune 06. His music includes YUNG SITAR, STRAIGHT OUTTA YERWADA, YEDA YUNG on Gully Gang Records and MAAF KAR on Sony Music India. Explore the releases below, or follow the linked artist channels for current updates.";
 
 export const latestRelease = {
-  title: "FACHADI",
+  title: "HOOD TALK",
   type: "SINGLE",
+  videoType: "Official lyric video",
   year: "2026",
-  youtubeId: "XbG9xca0Qvo",
-  detail: "Official music video, produced by Cosmo Drop. Out now on the official YUNG DSA YouTube channel.",
+  youtubeId: "D72IGt5CYl4",
+  detail: "A 2026 release rooted in Yerwada and its local speech. Watch the official lyric video, then explore the song-context guide.",
 };
 
-// Official music videos from the YUNG DSA YouTube channel (newest first)
+// Official releases with music or lyric videos (newest first)
 export const releases = [
+  { title: "HOOD TALK", year: "2026", note: "Official lyric video", videoType: "Official lyric video", youtubeId: "D72IGt5CYl4" },
   { title: "FACHADI", year: "2026", note: "Prod. Cosmo Drop", youtubeId: "XbG9xca0Qvo" },
   { title: "RADE RAPATE", year: "2026", note: "Gully Gang Records / Prod. Starboibeatz", youtubeId: "ZMQBrlntZEM" },
   { title: "MAAF KAR", year: "2025", note: "Sony Music India / Prod. Cosmo Drop", youtubeId: "plK0mRQEluI" },
@@ -63,5 +65,6 @@ export const platforms = [
   { name: "Spotify", url: links.spotify },
   { name: "Apple Music", url: links.appleMusic },
 ];
+
 
 

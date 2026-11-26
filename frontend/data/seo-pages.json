@@ -3,7 +3,7 @@
     "path": "/",
     "file": "index.html",
     "label": "Home",
-    "updated": "2026-11-14"
+    "updated": "2026-11-26"
   },
   {
     "path": "/press-kit.html",
@@ -15,30 +15,54 @@
     "path": "/style/",
     "file": "style/index.html",
     "label": "Style Finder",
-    "updated": "2026-11-23"
+    "updated": "2026-11-26"
   },
   {
     "path": "/style/goggles-sunglasses/",
     "file": "style/goggles-sunglasses/index.html",
     "label": "Goggles & sunglasses",
-    "updated": "2026-11-23"
+    "updated": "2026-11-26"
   },
   {
     "path": "/style/baggy-lowers/",
     "file": "style/baggy-lowers/index.html",
     "label": "Baggy lowers",
-    "updated": "2026-11-23"
+    "updated": "2026-11-26"
   },
   {
     "path": "/style/looks/",
     "file": "style/looks/index.html",
     "label": "Look journal",
-    "updated": "2026-11-23"
+    "updated": "2026-11-26"
   },
   {
     "path": "/style/about/",
     "file": "style/about/index.html",
     "label": "About the guide",
-    "updated": "2026-11-23"
+    "updated": "2026-11-26"
+  },
+  {
+    "path": "/style/hoodies-brand/",
+    "file": "style/hoodies-brand/index.html",
+    "label": "Hoodies & brands",
+    "updated": "2026-11-26"
+  },
+  {
+    "path": "/bigg-boss-20/",
+    "file": "bigg-boss-20/index.html",
+    "label": "Bigg Boss 20",
+    "updated": "2026-11-26"
+  },
+  {
+    "path": "/slang-guide/",
+    "file": "slang-guide/index.html",
+    "label": "Slang & songs",
+    "updated": "2026-11-26"
+  },
+  {
+    "path": "/wallpapers/",
+    "file": "wallpapers/index.html",
+    "label": "Fan wallpaper",
+    "updated": "2026-11-26"
   }
 ]

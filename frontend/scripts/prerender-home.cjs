@@ -10,6 +10,7 @@ const cache=new Map();
 function loadSource(filename){
  const file=path.resolve(root,"src",filename);
  if(!file.startsWith(path.join(root,"src")+path.sep)) throw new Error("Source outside src");
+ if(path.extname(file)===".json") return JSON.parse(fs.readFileSync(file,"utf8"));
  if(cache.has(file)) return cache.get(file).exports;
  const instance=new Module(file,module);instance.filename=file;instance.paths=Module._nodeModulePaths(path.dirname(file));cache.set(file,instance);
  const nativeRequire=Module.createRequire(file);
