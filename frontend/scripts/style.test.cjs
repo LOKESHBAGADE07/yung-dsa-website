@@ -26,8 +26,9 @@ function browserHarness(optOut=false){
  const filter={hidden:true,elements,addEventListener:(type,fn)=>handlers[type]=fn,reset(){elements.category.value="all";elements.budget.value="";elements.sort.value="";}};
  const selectors={"[data-style-filter]":filter,"[data-product-grid]":grid,"[data-result-count]":count,"[data-empty]":empty,"[data-reset]":{addEventListener:(t,fn)=>resetHandlers[t]=fn}};
  const document={querySelector:s=>selectors[s]||null,createElement:()=>({}),head:{appendChild:n=>scripts.push(n)},addEventListener:(t,fn)=>docHandlers[t]=fn};
- const window={StyleFinder:{select},location:{pathname:"/style/"},dispatchEvent:e=>events.push(e)};
+ const window={StyleFinder:{select},location:{pathname:"/style/"},addEventListener(){},dispatchEvent:e=>events.push(e)};
  const context={document,window,navigator:{globalPrivacyControl:optOut},CustomEvent:function(type,options){this.type=type;this.detail=options.detail;}};
+ vm.runInNewContext(fs.readFileSync(path.join(pub,"guides/static-metrics.js"),"utf8"),context);
  vm.runInNewContext(fs.readFileSync(path.join(pub,"style/style.js"),"utf8"),context);
  return {filter,grid,cards,elements,handlers,resetHandlers,count,empty,scripts,events,docHandlers};
 }

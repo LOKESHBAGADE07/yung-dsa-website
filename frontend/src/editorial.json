@@ -49,6 +49,10 @@
       "label": "Style Finder"
     },
     {
+      "path": "/style/fit-check/",
+      "label": "06 Fit Check"
+    },
+    {
       "path": "/style/goggles-sunglasses/",
       "label": "Goggles & sunglasses"
     },

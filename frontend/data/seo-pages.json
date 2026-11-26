@@ -18,6 +18,12 @@
     "updated": "2026-11-26"
   },
   {
+    "path": "/style/fit-check/",
+    "file": "style/fit-check/index.html",
+    "label": "06 Fit Check",
+    "updated": "2026-11-26"
+  },
+  {
     "path": "/style/goggles-sunglasses/",
     "file": "style/goggles-sunglasses/index.html",
     "label": "Goggles & sunglasses",

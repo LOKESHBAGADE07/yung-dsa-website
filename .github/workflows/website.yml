@@ -29,6 +29,23 @@ jobs:
         run: yarn build
       - name: Verify style filtering and static guides
         run: yarn test:style
+      - name: Install browser test tools and the receipt handler's dependencies
+        run: python -m pip install --quiet playwright==1.56.0 -r requirements.txt
+      - name: Verify receipt validation and browser interactions
+        run: |
+          python scripts/test_fit_receipts.py
+          python scripts/fit_browser.py
+      - name: Save responsive Fit Check previews
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: fit-check-previews
+          path: ${{ runner.temp }}/fit-check-screens
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Verify published Fit Check receipts
+        if: github.ref == 'refs/heads/main'
+        run: python scripts/fit_browser.py --production
       - name: Observe public HTTP routes
         if: always()
         continue-on-error: true

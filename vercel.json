@@ -191,6 +191,24 @@
       "dest": "/wallpapers/index.html"
     },
     {
+      "src": "^/style/fit-check/index\\.html$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/fit-check/"
+      }
+    },
+    {
+      "src": "^/style/fit-check$",
+      "status": 308,
+      "headers": {
+        "Location": "/style/fit-check/"
+      }
+    },
+    {
+      "src": "^/style/fit-check/$",
+      "dest": "/style/fit-check/index.html"
+    },
+    {
       "handle": "filesystem"
     },
     {

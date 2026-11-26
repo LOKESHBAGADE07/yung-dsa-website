@@ -37,7 +37,7 @@ function App() {
             <p className="eyebrow reveal">INDEPENDENT FAN-MADE CONCEPT</p>
             <h1 className="hero-title reveal delay-1">YUNG<br /><em>DSA</em></h1>
             <p className="hero-sub reveal delay-2">PUNE 06 <span>/</span> INDIAN HIP-HOP</p>
-            <div className="hero-actions reveal delay-3"><a className="button button-red" href="#music" data-testid="hero-listen-button">LISTEN NOW <ArrowUpRight size={16} /></a><a className="button button-ghost" data-testid="hero-style-button" href="/style/">EXPLORE STYLE <ArrowUpRight size={16} /></a></div>
+            <div className="hero-actions reveal delay-3"><a className="button button-red" href="#music" data-testid="hero-listen-button">LISTEN NOW <ArrowUpRight size={16} /></a><a className="button button-ghost" data-testid="hero-style-button" href="/style/fit-check/">BUILD YOUR FIT <ArrowUpRight size={16} /></a></div>
           </div>
           <div className="hero-foot"><span className="hero-scroll"><ArrowDown size={14} /> SCROLL</span></div>
         </div>
@@ -45,7 +45,7 @@ function App() {
 
 
       <section className="style-launch section-pad" id="style" data-testid="style-finder-section">
-        <div><p className="eyebrow">NEW / INDEPENDENT STYLE GUIDE</p><h2>FIND THE FIT.<br /><em>KNOW THE SOURCE.</em></h2><p className="muted-copy">Explore sunglasses and baggy lowers with checked retailer links, fit notes and clear labels. Current picks are similar styles, not confirmed artist-worn items.</p><a className="button button-red" href="/style/">OPEN STYLE FINDER <ArrowUpRight size={17} /></a></div>
+        <div><p className="eyebrow">SUNGLASSES + LOWERS</p><h2>06 <em>FIT CHECK.</em></h2><p className="muted-copy">Pick two pieces, see how they fit your budget and send your combination to a friend.</p><a className="button button-red" href="/style/fit-check/">BUILD YOUR FIT <ArrowUpRight size={17} /></a></div>
         <div className="style-launch-guides"><a href="/style/goggles-sunglasses/"><span>01 / EYEWEAR</span><strong>Goggles &amp; sunglasses</strong><ArrowUpRight size={22} /></a><a href="/style/baggy-lowers/"><span>02 / SILHOUETTE</span><strong>Baggy lowers</strong><ArrowUpRight size={22} /></a><a href="/style/looks/"><span>03 / EVIDENCE</span><strong>The look journal</strong><ArrowUpRight size={22} /></a></div>
       </section>
 
