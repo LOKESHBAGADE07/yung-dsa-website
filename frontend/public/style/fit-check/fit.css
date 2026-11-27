@@ -114,3 +114,5 @@ footer a { display: inline-block; padding-block: 12px; }
 }
 @media (forced-colors: active) { .piece-choice input:checked + .tile, .segments input:checked + span { outline: 3px solid Highlight; outline-offset: -3px; } }
 @media (prefers-reduced-motion: no-preference) { .primary, .tile { transition: box-shadow 140ms ease, background-color 140ms ease; } }
+.fit-guides { display: flex; flex-wrap: wrap; gap: 0 1.5rem; margin-top: 2rem; border-top: 1px solid var(--line); }
+.fit-guides a { display: inline-flex; align-items: center; min-height: 44px; color: var(--muted); font-size: .9rem; }

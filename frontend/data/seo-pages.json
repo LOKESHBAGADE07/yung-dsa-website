@@ -3,7 +3,7 @@
     "path": "/",
     "file": "index.html",
     "label": "Home",
-    "updated": "2026-11-26"
+    "updated": "2026-11-27"
   },
   {
     "path": "/press-kit.html",
@@ -21,19 +21,19 @@
     "path": "/style/fit-check/",
     "file": "style/fit-check/index.html",
     "label": "06 Fit Check",
-    "updated": "2026-11-26"
+    "updated": "2026-11-27"
   },
   {
     "path": "/style/goggles-sunglasses/",
     "file": "style/goggles-sunglasses/index.html",
     "label": "Goggles & sunglasses",
-    "updated": "2026-11-26"
+    "updated": "2026-11-27"
   },
   {
     "path": "/style/baggy-lowers/",
     "file": "style/baggy-lowers/index.html",
     "label": "Baggy lowers",
-    "updated": "2026-11-26"
+    "updated": "2026-11-27"
   },
   {
     "path": "/style/looks/",
@@ -45,13 +45,13 @@
     "path": "/style/about/",
     "file": "style/about/index.html",
     "label": "About the guide",
-    "updated": "2026-11-26"
+    "updated": "2026-11-27"
   },
   {
     "path": "/style/hoodies-brand/",
     "file": "style/hoodies-brand/index.html",
-    "label": "Hoodies & brands",
-    "updated": "2026-11-26"
+    "label": "Company & clothing credits",
+    "updated": "2026-11-27"
   },
   {
     "path": "/bigg-boss-20/",
@@ -68,7 +68,7 @@
   {
     "path": "/wallpapers/",
     "file": "wallpapers/index.html",
-    "label": "Fan wallpaper",
-    "updated": "2026-11-26"
+    "label": "Artist photos & fan wallpaper",
+    "updated": "2026-11-27"
   }
 ]

@@ -1,4 +1,4 @@
-"""Record a private, anonymous receipt for a Fit Check interaction."""
+"""Record a private, anonymous receipt for a style or wallpaper interaction."""
 import json
 import os
 import re
@@ -10,11 +10,13 @@ from vercel.blob.sync import put_blob
 
 CATALOGUE = json.loads((Path(__file__).resolve().parents[1] / "data" / "style-catalog.json").read_text(encoding="utf-8"))
 CATEGORIES = {product["id"]: product["category"] for product in CATALOGUE["products"]}
-SOURCES = {"home", "gallery", "fit-check", "sunglasses", "lowers", "guide", "external-or-direct", "shared"}
+SOURCES = {"home", "gallery", "fit-check", "sunglasses", "lowers", "hoodies", "guide", "external-or-direct", "shared"}
 EVENT_ID = re.compile(r"[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}")
 
 def group_for(payload):
     event = payload.get("event")
+    if event == "wallpaper_choice" and payload.get("choice") in ("artist-photos", "download-artwork"):
+        return payload["choice"]
     if event == "fit_open" and payload.get("source") in SOURCES:
         return payload["source"]
     if event == "retailer_click" and payload.get("source") in SOURCES and payload.get("product") in CATEGORIES:

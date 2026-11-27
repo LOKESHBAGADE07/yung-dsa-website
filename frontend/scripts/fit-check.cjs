@@ -71,6 +71,12 @@ module.exports = function fitCheckPage(catalogue) {
   <div class="retailers"><h3>Find the pieces</h3><a data-shop="frames" href="${escape(first.url)}" rel="noopener noreferrer" target="_blank">Sunglasses at ${escape(first.merchant)} ↗</a><a data-shop="lowers" href="${escape(second.url)}" rel="noopener noreferrer" target="_blank">Lowers at ${escape(second.merchant)} ↗</a></div>
 </section>
 <noscript><section><h2>Explore the pieces</h2><p>Enable JavaScript to build and share a pair, or browse the retailer listings.</p><ul>${data.map(p => `<li><a href="${escape(p.url)}" rel="noopener noreferrer" target="_blank">${escape(p.name)} · ${money(p.price)}</a></li>`).join('')}</ul></section></noscript>
-</div></div></main><footer><span>Independent fan guide by <a href="https://www.linkedin.com/in/lokeshbagade/" target="_blank" rel="noopener noreferrer">Lokesh Bagade</a>.</span><span>Retailer links earn no commission. <a href="/style/about/">Sources &amp; privacy</a></span></footer>
+</div></div>
+<nav class="fit-guides" aria-label="Fit and clothing guides">
+  <a href="/style/goggles-sunglasses/">Compare frame measurements</a>
+  <a href="/style/baggy-lowers/">Check how the lowers fit</a>
+  <a href="/style/hoodies-brand/#company">See the clothing credits</a>
+</nav>
+</main><footer><span>Independent fan guide by <a href="https://www.linkedin.com/in/lokeshbagade/" target="_blank" rel="noopener noreferrer">Lokesh Bagade</a>.</span><span>Retailer links earn no commission. <a href="/style/about/">Sources &amp; privacy</a></span></footer>
 <script id="fit-data" type="application/json">${json({products:data,date})}</script></body></html>\n`;
 };

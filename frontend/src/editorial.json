@@ -1,5 +1,5 @@
 {
-  "reviewedAt": "2026-11-26",
+  "publishedAt": "2026-11-26",
   "homeTitle": "Yung DSA (Harsh Machare) — Songs, Bigg Boss 20 & Style Guide",
   "homeDescription": "Explore Yung DSA's songs including Hood Talk, his Yerwada Pune 06 roots, Bigg Boss 20 sources, and independent sunglasses, hoodie and baggy-lowers guides.",
   "sources": {
@@ -21,13 +21,16 @@
     },
     {
       "question": "Does Yung DSA own a clothing brand or company?",
-      "answer": "We have not verified a retail clothing brand owned by him. Music-label credits and clothing partnerships are different from ownership: the official Yeda Yung video credits Gully Gang Records and names Urban Monkey and Bank of Brokes as clothing partners.",
-      "source": "yeda"
+      "answer": "The artist sources we reviewed identify no company or clothing label owned by Yung DSA. The Yeda Yung video names Gully Gang Records as the record label and Urban Monkey and Bank of Brokes as clothing partners.",
+      "source": "yeda",
+      "href": "/style/hoodies-brand/#company",
+      "hrefLabel": "See the company and clothing credits",
+      "sourceLabel": "Official Yeda Yung credits"
     },
     {
       "question": "What hoodie did Yung DSA wear on Bigg Boss 20?",
       "answer": "A fan discussion suggests a BAPE shark hoodie, but this guide has not confirmed the exact item, its authenticity or the circulating ₹92,000 price. Read the hoodie guide for the evidence and what to check before buying.",
-      "href": "/style/hoodies-brand/"
+      "href": "/style/hoodies-brand/#bape"
     },
     {
       "question": "Where is Yung DSA from?",
@@ -70,7 +73,7 @@
     },
     {
       "path": "/style/hoodies-brand/",
-      "label": "Hoodies & brands"
+      "label": "Company & clothing credits"
     },
     {
       "path": "/bigg-boss-20/",
@@ -82,7 +85,7 @@
     },
     {
       "path": "/wallpapers/",
-      "label": "Fan wallpaper"
+      "label": "Artist photos & fan wallpaper"
     }
   ]
 }

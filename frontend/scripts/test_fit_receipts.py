@@ -54,6 +54,15 @@ class ReceiptTest(unittest.TestCase):
         self.assertEqual(self.send({**EVENT,"source":"a"*600}),413)
         put.assert_not_called()
 
+    @patch.object(fit_activity, "put_blob")
+    def test_wallpaper_choices_are_separate_and_allowlisted(self, put):
+        payload = {"event": "wallpaper_choice", "id": EVENT["id"]}
+        for choice in ("artist-photos", "download-artwork"):
+            self.assertEqual(self.send({**payload, "choice": choice}), 204)
+            self.assertIn("/wallpaper_choice/" + choice + "/", put.call_args.args[0])
+        self.assertEqual(self.send({**payload, "choice": "other"}), 400)
+        self.assertEqual(put.call_count, 2)
+
     @patch.object(fit_activity,"put_blob",side_effect=RuntimeError("unavailable"))
     def test_unavailable_destination_does_not_acknowledge_receipt(self,_):
         self.assertEqual(self.send(EVENT),503)

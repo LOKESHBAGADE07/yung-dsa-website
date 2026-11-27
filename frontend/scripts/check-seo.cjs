@@ -57,7 +57,24 @@ assert.ok(!home.querySelector("noscript h1"));
 const editorial=require('../src/editorial.json');
 assert.equal(home.title,editorial.homeTitle);
 assert.equal(home.querySelector('meta[name="description"]').content,editorial.homeDescription);
-for(const faq of editorial.homeFaq)assert.ok(home.body.textContent.includes(faq.question)&&home.body.textContent.includes(faq.answer),'FAQ absent from prerendered HTML');
+for (const faq of editorial.homeFaq) {
+ const card = Array.from(home.querySelectorAll('.artist-faq-list article')).find(article => article.querySelector('h3')?.textContent === faq.question);
+ assert.ok(card?.textContent.includes(faq.answer), 'FAQ absent from prerendered HTML');
+ if (faq.href) assert.ok(card.querySelector('a[href="' + faq.href + '"]'), 'Missing guide in FAQ: ' + faq.question);
+ if (faq.source) assert.ok(card.querySelector('a[href="' + editorial.sources[faq.source] + '"]'), 'Missing source in FAQ: ' + faq.question);
+}
+const fitPath = '/style/fit-check/';
+for (const [guide, area] of [
+ ['/style/goggles-sunglasses/', '.comparison + .actions'],
+ ['/style/baggy-lowers/', '#options'],
+ ['/style/hoodies-brand/', '#fit']
+]) {
+ assert.ok(docs.get(guide).querySelector(area + ' a[href="' + fitPath + '"]'), 'Missing contextual Fit Check link from ' + guide);
+ assert.ok(docs.get(fitPath).querySelector('.fit-guides a[href^="' + guide + '"]'), 'Missing comparison link back to ' + guide);
+}
+const wallpaper = docs.get('/wallpapers/');
+assert.ok(wallpaper.querySelector('.article-hero a[href="/style/#orbit"][data-wallpaper-choice="artist-photos"]'));
+assert.ok(wallpaper.querySelector('.article-hero a[download][data-wallpaper-choice="download-artwork"]'));
 for(const p of pages){
  assert.ok(home.querySelector('footer a[href="'+p.path+'"]'),'Missing footer route '+p.path);
  if(p.path!=='/')assert.ok(home.querySelector('main a[href="'+p.path+'"]'),'Missing body route '+p.path);
