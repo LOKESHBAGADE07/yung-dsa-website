@@ -20,6 +20,41 @@ class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self, *args):
         pass
 
+def check_guide_journey(page, base, events):
+    page.goto(base, wait_until="domcontentloaded")
+    page.get_by_role("link", name="See the company and clothing credits").click()
+    expect(page.get_by_role("heading", level=1)).to_have_text("Does Yung DSA own a company or clothing brand?")
+    expect(page.locator("#company table")).to_contain_text("Bank of Brokes")
+    assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+    page.get_by_role("link", name="Pair sunglasses and lowers in 06 Fit Check").click()
+    for guide_label, pair_label in (
+        ("Compare frame measurements", "Pair these frames with baggy lowers"),
+        ("Check how the lowers fit", "Pair these lowers with sunglasses"),
+    ):
+        page.get_by_role("link", name=guide_label).click()
+        page.get_by_role("link", name=pair_label).click()
+        expect(page.locator("[data-builder]")).to_be_visible()
+    page.goto(base + "/wallpapers/", wait_until="domcontentloaded")
+    choices = page.get_by_role("navigation", name="Artist photos and wallpaper")
+    assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+    with page.expect_download() as download:
+        choices.get_by_role("link", name="Download the fan wallpaper").click()
+    assert download.value.suggested_filename == "yung-dsa-pune-06-fan-wallpaper.png"
+    header = Path(download.value.path()).read_bytes()[:24]
+    assert header[:8] == bytes.fromhex("89504e470d0a1a0a")
+    assert int.from_bytes(header[16:20], "big") == 941 and int.from_bytes(header[20:24], "big") == 1672
+    choices.get_by_role("link", name="View sourced artist photos").click()
+    expect(page).to_have_url(base + "/style/#orbit")
+    expect(page.locator("#orbit")).to_be_visible()
+    for _ in range(40):
+        choices_seen = {e.get("choice") for e, status in events if e["event"] == "wallpaper_choice" and status == 204}
+        sources_seen = {e.get("source") for e, status in events if e["event"] == "fit_open" and status == 204}
+        if choices_seen == {"artist-photos", "download-artwork"} and {"hoodies", "sunglasses", "lowers"} <= sources_seen:
+            return
+        page.wait_for_timeout(250)
+    raise AssertionError("Missing a guide referral or wallpaper choice in the recorded events")
+
+
 def run(base, out, live):
     catalogue = {p["id"]: p for p in json.loads((ROOT / "data/style-catalog.json").read_text())["products"]}
     out.mkdir(parents=True, exist_ok=True)
@@ -104,8 +139,9 @@ def run(base, out, live):
                 expect(friend.locator("[data-status]")).to_contain_text("unavailable")
                 expect(friend.locator("[data-builder]")).to_be_visible()
                 assert friend.evaluate("document.documentElement.scrollWidth <= innerWidth")
+            check_guide_journey(page, base, events)
             assert not page_errors, page_errors
-            print(f"{width}px — selection, budgets, share, restore, PNG, retailer navigation and {len(events)} receipts passed", flush=True)
+            print(f"{width}px — selection, budgets, share, restore, PNG, guide navigation, both wallpaper choices and {len(events)} receipts passed", flush=True)
             ctx.close()
         if not live:
             ctx = browser.new_context(java_script_enabled=False, viewport={"width":320,"height":740})
@@ -130,12 +166,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
     out = Path(os.getenv("RUNNER_TEMP", ".")) / "fit-check-screens"
     if args.production:
-        expected = (ROOT / "build/style/fit-check/fit.js").read_bytes()
+        asset_paths = ("style/fit-check/fit.js", "guides/static-metrics.js")
+        expected = {name: (ROOT / "build" / name).read_bytes() for name in asset_paths}
+        def asset_is_live(name):
+            with urlopen("https://yungdsa.com/" + name, timeout=8) as response:
+                return response.read() == expected[name]
         for attempt in range(28):
             try:
-                with urlopen("https://yungdsa.com/style/fit-check/fit.js", timeout=8) as response:
-                    if response.read() == expected:
-                        break
+                if all(asset_is_live(name) for name in asset_paths):
+                    break
             except (URLError, TimeoutError):
                 pass
             time.sleep(5)

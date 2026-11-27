@@ -70,7 +70,18 @@ function App() {
         <div className="section-head"><div><p className="eyebrow">THE FAN GUIDE</p><h2 id="reader-guides-title">GO A<br /><em>LITTLE DEEPER.</em></h2></div><p className="head-note">Music, style and the story.<br />Sources you can follow.</p></div>
         <nav className="reader-guide-links" aria-label="All website guides">{editorial.guides.filter(guide => guide.path !== "/").map((guide, index) => <a key={guide.path} href={guide.path}><span>{String(index + 1).padStart(2, "0")}</span><strong>{guide.label}</strong><ArrowUpRight size={20} aria-hidden="true" /></a>)}</nav>
       </section>
-      <section className="artist-faq section-pad" aria-labelledby="artist-faq-title"><div><p className="eyebrow">A FEW ANSWERS</p><h2 id="artist-faq-title">YUNG DSA.<br /><em>THE DETAILS.</em></h2><p className="muted-copy">Reviewed 26 November 2026.<br />An independent, source-linked guide.</p></div><div className="artist-faq-list">{editorial.homeFaq.map(faq => <article key={faq.question}><h3>{faq.question}</h3><p>{faq.answer}</p>{faq.source ? <a href={editorial.sources[faq.source]} {...ext}>Read the source <ArrowUpRight size={14} aria-hidden="true" /></a> : <a href={faq.href}>Read the guide <ArrowUpRight size={14} aria-hidden="true" /></a>}</article>)}</div></section>
+      <section className="artist-faq section-pad" aria-labelledby="artist-faq-title">
+        <div><p className="eyebrow">A FEW ANSWERS</p><h2 id="artist-faq-title">YUNG DSA.<br /><em>THE DETAILS.</em></h2><p className="muted-copy">Reviewed <time dateTime="2026-11-27">27 November 2026</time>.<br />An independent, source-linked guide.</p></div>
+        <div className="artist-faq-list">{editorial.homeFaq.map(faq => (
+          <article key={faq.question}>
+            <h3>{faq.question}</h3><p>{faq.answer}</p>
+            <div className="faq-links">
+              {faq.href && <a href={faq.href}>{faq.hrefLabel || "Read the guide"} <ArrowUpRight size={14} aria-hidden="true" /></a>}
+              {faq.source && <a href={editorial.sources[faq.source]} {...ext}>{faq.sourceLabel || "Read the source"} <ArrowUpRight size={14} aria-hidden="true" /></a>}
+            </div>
+          </article>
+        ))}</div>
+      </section>
 
       <section className="follow-section" data-testid="follow-section"><p className="eyebrow">OFFICIAL CHANNELS</p><h2>FOLLOW THE<br /><em>MOVEMENT.</em></h2><div className="follow-links">{platforms.map((platform) => <a key={platform.name} data-testid={`social-${platform.name.toLowerCase().replace(" ", "-")}-link`} href={platform.url} {...ext}>{platform.name === "Instagram" ? <Instagram size={20} /> : platform.name === "YouTube" ? <Youtube size={20} /> : <span className="platform-symbol">◉</span>}{platform.name}<ArrowUpRight size={16} /></a>)}</div></section>
     </main>

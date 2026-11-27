@@ -9,7 +9,8 @@
   }
   const sources = {
     '/': 'home', '/style': 'gallery', '/style/fit-check': 'fit-check',
-    '/style/goggles-sunglasses': 'sunglasses', '/style/baggy-lowers': 'lowers'
+    '/style/goggles-sunglasses': 'sunglasses', '/style/baggy-lowers': 'lowers',
+    '/style/hoodies-brand': 'hoodies'
   };
   const source = path => sources[path.replace(/\/$/, '') || '/'] || 'guide';
   function record(event, fields) {
@@ -23,6 +24,12 @@
     if (typeof fetch === 'function') {
       fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, credentials: 'omit', keepalive: true }).catch(() => {});
     }
+  }
+  if (window.location.pathname.replace(/\/$/, '') === '/wallpapers') {
+    document.addEventListener('click', event => {
+      const link = event.target.closest?.('a[data-wallpaper-choice]');
+      if (link) record('wallpaper_choice', { choice: link.dataset.wallpaperChoice });
+    });
   }
   window.addEventListener('style:retailer-click', ({detail}) =>
     record('retailer_click', { product: detail.product_id, source: source(location.pathname) }));

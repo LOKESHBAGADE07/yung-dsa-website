@@ -1,4 +1,4 @@
-"""Count anonymous production Fit Check receipts for a UTC date window.
+"""Count anonymous production style and wallpaper receipts for a UTC date window.
 
 Run from a server environment connected to the project's private Vercel Blob store:
     python scripts/fit_report.py --days 7
@@ -26,7 +26,7 @@ def main():
             totals[event] += 1
             breakdown[(event, group)] += 1
     print(f"{args.scope} | {start} to {today} UTC")
-    for event in ("fit_open", "fit_complete", "retailer_click"):
+    for event in ("fit_open", "fit_complete", "retailer_click", "wallpaper_choice"):
         print(f"{event}: {totals[event]}")
         for (kind, group), count in breakdown.most_common():
             if kind == event:
