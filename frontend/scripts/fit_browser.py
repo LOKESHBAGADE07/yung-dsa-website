@@ -39,8 +39,11 @@ def check_guide_journey(page, base, events):
     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
     with page.expect_download() as download:
         choices.get_by_role("link", name="Download the fan wallpaper").click()
-    assert download.value.suggested_filename == "yung-dsa-pune-06-fan-wallpaper.png"
-    header = Path(download.value.path()).read_bytes()[:24]
+    artwork = ROOT / "public/wallpapers/assets/pune-06-fan-wallpaper.png"
+    assert download.value.suggested_filename == artwork.name, download.value.suggested_filename
+    saved = Path(download.value.path()).read_bytes()
+    assert saved == artwork.read_bytes(), "Downloaded wallpaper differs from the published original"
+    header = saved[:24]
     assert header[:8] == bytes.fromhex("89504e470d0a1a0a")
     assert int.from_bytes(header[16:20], "big") == 941 and int.from_bytes(header[20:24], "big") == 1672
     choices.get_by_role("link", name="View sourced artist photos").click()
@@ -166,7 +169,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     out = Path(os.getenv("RUNNER_TEMP", ".")) / "fit-check-screens"
     if args.production:
-        asset_paths = ("style/fit-check/fit.js", "guides/static-metrics.js")
+        asset_paths = ("style/fit-check/fit.js", "guides/static-metrics.js", "wallpapers/index.html")
         expected = {name: (ROOT / "build" / name).read_bytes() for name in asset_paths}
         def asset_is_live(name):
             with urlopen("https://yungdsa.com/" + name, timeout=8) as response:
