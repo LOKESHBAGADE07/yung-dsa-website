@@ -25,8 +25,9 @@ jobs:
           const base='https://yungdsa.com';
           for(let i=0;i<30;i++){
             try {
-              const r=await fetch(base+'/fonts/site.css');
-              if(r.ok && (await r.text()).includes('Space Grotesk')) break;
+              const html=await (await fetch(base+'/')).text();
+              const sheet=html.match(/href="([^"]*\/static\/css\/main\.[^"]+\.css)"/);
+              if(sheet && (await (await fetch(new URL(sheet[1],base))).text()).includes('#be163e')) break;
             } catch {}
             if(i===29) throw Error('Latest font assets not live');
             await delay(4000);
@@ -42,10 +43,11 @@ jobs:
               const hero=document.querySelector('[data-testid="hero-image"]');
               const fonts=performance.getEntriesByType('resource').filter(r=>r.name.endsWith('.woff2')).map(r=>r.name);
               const imageEntries=performance.getEntriesByName(hero.currentSrc).map(entry=>entry.initiatorType);
-              return {fonts,hero:hero.currentSrc,heroWidth:hero.naturalWidth,preload:document.head.querySelector('link[as="image"]')?.imageSrcset,initiators:imageEntries};
+              return {pressColor:getComputedStyle(document.querySelector('#press')).backgroundColor,fonts,hero:hero.currentSrc,heroWidth:hero.naturalWidth,preload:document.head.querySelector('link[as="image"]')?.imageSrcset,initiators:imageEntries};
             });
             assert(data.fonts.length>0 && data.fonts.every(x=>x.startsWith(base+'/fonts/files/')));
             assert(!req.some(x=>/^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(x)||/emergent\.sh|googlesyndication\.com|\/_vercel\/(insights|speed-insights)/.test(x)));
+            assert.equal(data.pressColor,'rgb(190, 22, 62)');
             assert(data.heroWidth>0 && data.preload && data.initiators.length===1);
             assert(response.headers()['content-security-policy'].includes("font-src 'self'"));
             console.log('VERIFIED RESOURCES '+JSON.stringify(data));
