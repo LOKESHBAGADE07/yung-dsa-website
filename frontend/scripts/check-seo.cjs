@@ -90,6 +90,19 @@ for(const p of pages){
  assert.ok(home.querySelector('footer a[href="'+p.path+'"]'),'Missing footer route '+p.path);
  if(p.path!=='/')assert.ok(home.querySelector('main a[href="'+p.path+'"]'),'Missing body route '+p.path);
 }
+const hero=home.querySelector('[data-testid="hero-image"]');
+const heroPreloads=Array.from(home.querySelectorAll('link[rel="preload"][as="image"]')).filter(link=>link.getAttribute("imagesrcset")===hero.getAttribute("srcset"));
+assert.equal(heroPreloads.length,1,"One matching hero image preload");
+assert.ok(home.head.contains(heroPreloads[0]),"Discover the responsive hero in the document head");
+const faces=read("fonts/site.css");
+for(const match of faces.matchAll(/url\(\.\/files\/([^)]*)\)/g)){
+ const font=fs.readFileSync(path.join(output,"fonts/files",match[1]));
+ assert.equal(font.toString("ascii",0,4),"wOF2","Invalid local font "+match[1]);
+}
+assert.equal((faces.match(/@font-face/g)||[]).length,8,"Two licensed subsets for each of the four fonts");
+for(const [route,document] of docs){
+ assert.ok(!document.querySelector('link[href*="fonts.googleapis.com"],link[href*="fonts.gstatic.com"]'),"Third-party font link: "+route);
+}
 const artist=Array.from(home.querySelectorAll('script[type="application/ld+json"]')).flatMap(s=>JSON.parse(s.textContent)["@graph"]||[]).find(n=>n["@id"]==="https://yungdsa.com/#artist");
 assert.equal(artist["@type"],"Person");
 const sitemap=new JSDOM(read("sitemap.xml"),{contentType:"application/xml"}).window.document;

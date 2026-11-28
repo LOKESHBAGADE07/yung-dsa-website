@@ -36,9 +36,12 @@ function prerender(){
  const html=fs.readFileSync(output,"utf8");
  const marker='<div id="root"></div>';
  if(!html.includes(marker)) throw new Error("Expected empty CRA root; refusing to emit an incomplete page.");
- const rendered=renderHome();
+ const {hero,heroSmall}=loadSource("content.js").images;
+ const rendered=renderHome().replace(/<link\b[^>]*\brel="preload"[^>]*>/gi,tag=>tag.includes(heroSmall)?'':tag);
  if(!rendered.includes('href="/style/"')||!rendered.includes('data-testid="artist-bio"'))throw new Error("Homepage render is missing core content.");
- fs.writeFileSync(output,html.replace(marker,()=>'<div id="root" data-prerendered="true">'+rendered+"</div>"));
+ const headHint='<link rel="preconnect" href="'+new URL(hero).origin+'"><link rel="preload" as="image" href="'+hero+'" imagesrcset="'+heroSmall+' 320w, '+hero+' 1280w" imagesizes="100vw" fetchpriority="high">';
+ const withHint=html.replace(/<meta charset="utf-8"\s*\/?>/i,tag=>tag+headHint);
+ fs.writeFileSync(output,withHint.replace(marker,()=>'<div id="root" data-prerendered="true">'+rendered+"</div>"));
  console.log("Prerendered the actual homepage React tree into the built HTML.");
 }
 module.exports={loadSource,renderHome,prerender};
