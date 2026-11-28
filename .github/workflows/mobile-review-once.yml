@@ -1,63 +1,43 @@
-name: One-off production mobile review
+name: Stage verified open font assets
 on:
   push:
     branches: ['audit/mobile-review-20261128']
     paths: ['.github/workflows/mobile-review-once.yml']
 permissions:
-  contents: read
+  contents: write
 jobs:
-  details:
+  fonts:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 4
     steps:
-      - name: Install test tools
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 'de13d5c8f6ad901949c580036f009b79ea39b670'
+      - name: Copy the eight pinned WOFF2 files and their original licenses
         run: |
-          mkdir -p "$RUNNER_TEMP/mobile-review"
-          cd "$RUNNER_TEMP/mobile-review"
-          npm install --no-audit --no-fund lighthouse@12.8.2 playwright-core@1.56.0
-      - name: Read saved Lighthouse panel and measure existing artwork variants
-        working-directory: ${{ runner.temp }}/mobile-review
-        run: |
-          node --input-type=module <<'JS'
-          import { chromium } from 'playwright-core';
-          const browser=await chromium.launch({channel:'chrome',args:['--no-sandbox']});
-          try {
-            const page=await browser.newPage();
-            await page.goto('https://pagespeed.web.dev/analysis/https-yungdsa-com/8zqpmxr8iwbab2tqcbn7nd?form_factor=mobile&hl=en',{waitUntil:'domcontentloaded'});
-            try { await page.getByText('Diagnose performance issues',{exact:true}).scrollIntoViewIfNeeded({timeout:20000}); } catch {}
-            for(let n=0;n<12;n++){
-              if((await Promise.all(page.frames().map(f=>f.locator('.lh-gauge__percentage').count().catch(()=>0)))).some(Boolean)) break;
-              await page.waitForTimeout(1500);
-            }
-            for(const f of page.frames()){
-              const groups=await f.locator('.lh-gauge__wrapper, .lh-metric').allTextContents().catch(()=>[]);
-              const snapshot=await f.locator('body').ariaSnapshot({timeout:4000}).catch(()=>'');
-              const lines=snapshot.split('\n').filter(s=>/Performance|Accessibility|Best Practices|SEO|Contentful Paint|Blocking Time|Layout Shift|Speed Index|Element render delay|image delivery|unused JavaScript|[0-9]+(\.[0-9]+)? (s|ms|KiB)|[0-9]{2,3}$/.test(s)).slice(0,110);
-              console.log('SAVED FRAME '+JSON.stringify({groups:groups.slice(0,14),details:lines}).slice(0,11000));
-            }
-            for(const [folder,name] of [['vi','maxresdefault.jpg'],['vi_webp','maxresdefault.webp'],['vi','mqdefault.jpg'],['vi_webp','mqdefault.webp'],['vi_webp','sddefault.webp'],['vi_webp','hq720.webp']]){
-              const url='https://i.ytimg.com/'+folder+'/plK0mRQEluI/'+name;
-              const response=await page.request.get(url);
-              const bytes=await response.body();
-              const size=await page.evaluate(async ({data,type})=>{
-                const img=await createImageBitmap(new Blob([Uint8Array.from(atob(data),v=>v.charCodeAt(0))],{type}));
-                return [img.width,img.height];
-              },{data:bytes.toString('base64'),type:response.headers()['content-type']}).catch(()=>null);
-              console.log('ARTWORK '+JSON.stringify({url,status:response.status(),bytes:bytes.length,size}));
-            }
-          } finally { await browser.close(); }
-          JS
-      - name: Inspect remaining mobile performance and accessibility findings
-        working-directory: ${{ runner.temp }}/mobile-review
-        run: |
-          export CHROME_PATH="$(command -v google-chrome)"
-          ./node_modules/.bin/lighthouse https://yungdsa.com/ --quiet --only-categories=performance,accessibility --chrome-flags='--headless --no-sandbox' --output=json --output-path=detail.json
-          node --input-type=module <<'JS'
-          import fs from 'node:fs';
-          const r=JSON.parse(fs.readFileSync('detail.json'));
-          for(const [k,a] of Object.entries(r.audits)) {
-            if((a.score===0 && r.categories.accessibility.auditRefs.some(x=>x.id===k)) || k==='largest-contentful-paint-element' || k==='lcp-breakdown-insight' || k==='render-blocking-resources'){
-              console.log('LIVE DETAIL '+k+' '+JSON.stringify(a.details?.items?.slice(0,4)??[]).slice(0,3500));
-            }
-          }
-          JS
+          python - <<'PY'
+          from hashlib import sha1
+          from pathlib import Path
+          from urllib.request import urlopen
+          pin = '5a72889057f592bb0659629e38337359f94d53b2'
+          expected = {"space-grotesk/files/space-grotesk-latin-ext-wght-normal.woff2":"db732c272dc2d48c5600b88ca24d2206fb123bd4","space-grotesk/files/space-grotesk-latin-wght-normal.woff2":"0f3474ee8af2f8253225f3b41bf79be986a1ae13","unbounded/files/unbounded-latin-ext-wght-normal.woff2":"e17f7659b355f822d9c0f039b8f74d52dc4104fe","unbounded/files/unbounded-latin-wght-normal.woff2":"3260a1939eb5a3020b48235c1a52852080f929b6","dm-sans/files/dm-sans-latin-ext-wght-normal.woff2":"db39c6263056cff430c828fe7035b9ba5edaa6ee","dm-sans/files/dm-sans-latin-wght-normal.woff2":"01383d7e5c4340847b8fe4570ad0458e6582989d","manrope/files/manrope-latin-ext-wght-normal.woff2":"bd24140af06f1b5897d3bbd6538a74b03748a21e","manrope/files/manrope-latin-wght-normal.woff2":"71eb731d558046199aa7f985adbf812890a093a1"}
+          target = Path('frontend/public/fonts')
+          (target / 'files').mkdir(parents=True)
+          (target / 'licenses').mkdir()
+          for path, digest in expected.items():
+              with urlopen(f'https://raw.githubusercontent.com/fontsource/font-files/{pin}/fonts/variable/{path}', timeout=20) as resp:
+                  data = resp.read()
+              assert data[:4] == b'wOF2'
+              assert sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest() == digest
+              (target / 'files' / Path(path).name).write_bytes(data)
+          for family in sorted({p.split('/')[0] for p in expected}):
+              with urlopen(f'https://raw.githubusercontent.com/fontsource/font-files/{pin}/fonts/variable/{family}/LICENSE', timeout=20) as resp:
+                  data = resp.read()
+              assert b'SIL OPEN FONT LICENSE' in data.upper()
+              (target / 'licenses' / (family+'.txt')).write_bytes(data)
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- frontend/public/fonts/
+          git commit -m 'Vendor verified font subsets and original Open Font Licenses'
+          git push origin HEAD:refs/heads/codex/font-assets-20261128
