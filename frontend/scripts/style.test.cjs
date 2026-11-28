@@ -18,7 +18,7 @@ test("price sorting does not mutate catalogue order; unset budget shows all",()=
  assert.equal(JSON.stringify(data.products),before);
  assert.equal(select(data.products,{budget:"",category:"all"}).length,6);
 });
-function browserHarness(optOut=false){
+function browserHarness(optOut=false, preference=null){
  const cards=data.products.map(p=>({dataset:{productId:p.id,category:p.category,price:String(p.price)},hidden:false}));
  const grid={children:cards.slice(),querySelectorAll:()=>cards,appendChild(node){this.children=this.children.filter(n=>n!==node);this.children.push(node);}};
  const elements={category:{value:"all",focus(){this.focused=true;}},budget:{value:""},sort:{value:""}};
@@ -26,7 +26,7 @@ function browserHarness(optOut=false){
  const filter={hidden:true,elements,addEventListener:(type,fn)=>handlers[type]=fn,reset(){elements.category.value="all";elements.budget.value="";elements.sort.value="";}};
  const selectors={"[data-style-filter]":filter,"[data-product-grid]":grid,"[data-result-count]":count,"[data-empty]":empty,"[data-reset]":{addEventListener:(t,fn)=>resetHandlers[t]=fn}};
  const document={querySelector:s=>selectors[s]||null,createElement:()=>({}),head:{appendChild:n=>scripts.push(n)},addEventListener:(t,fn)=>docHandlers[t]=fn};
- const window={StyleFinder:{select},location:{pathname:"/style/"},addEventListener(){},dispatchEvent:e=>events.push(e)};
+ const window={StyleFinder:{select},location:{pathname:"/style/"},localStorage:{getItem:()=>preference},addEventListener(){},dispatchEvent:e=>events.push(e)};
  const context={document,window,navigator:{globalPrivacyControl:optOut},CustomEvent:function(type,options){this.type=type;this.detail=options.detail;}};
  vm.runInNewContext(fs.readFileSync(path.join(pub,"guides/static-metrics.js"),"utf8"),context);
  vm.runInNewContext(fs.readFileSync(path.join(pub,"style/style.js"),"utf8"),context);
@@ -42,11 +42,13 @@ test("filter UI supports empty results, accessible count and full reset",()=>{
  assert.deepEqual(h.grid.children.filter(n=>!n.hidden).map(n=>n.dataset.productId),["waffle-pants","1998-denim","rivet-denim-black","cyclops-002","ape-x-002","y2k-001"]);
 });
 test("privacy signal suppresses analytics and local outbound hook; links are never intercepted",()=>{
- const h=browserHarness(true);
+ const h=browserHarness(true,"allow");
  assert.equal(h.scripts.length,0);
  h.docHandlers.click({target:{closest:()=>({dataset:{retailerId:"y2k-001",merchant:"Urban Monkey"}})}});
  assert.equal(h.events.length,0);
- const normal=browserHarness();
+ assert.equal(browserHarness().scripts.length,0);
+ assert.equal(browserHarness(false,"off").scripts.length,0);
+ const normal=browserHarness(false,"allow");
  assert.equal(normal.scripts[0].src,"/_vercel/insights/script.js");
  normal.docHandlers.click({target:{closest:()=>({dataset:{retailerId:"y2k-001",merchant:"Urban Monkey"}})}});
  assert.equal(normal.events[0].type,"style:retailer-click");assert.equal(normal.events[0].detail.product_id,"y2k-001");

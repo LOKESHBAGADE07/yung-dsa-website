@@ -2,6 +2,8 @@
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict"),Module=require("node:module");
 const root=path.resolve(__dirname,".."),output=path.join(root,"build");
+assert.equal(fs.readFileSync(path.join(root,"requirements.txt"),"utf8").trim(),
+ fs.readFileSync(path.join(root,"..","requirements.txt"),"utf8").trim(),"Both Vercel build roots need identical direct Python pins");
 const pages=require("../data/seo-pages.json");
 const projectRequire=Module.createRequire(path.join(root,"package.json"));
 const scriptsRequire=Module.createRequire(projectRequire.resolve("react-scripts/package.json"));
@@ -12,6 +14,15 @@ const docs=new Map(pages.map(p=>[p.path,new JSDOM(read(p.file),{url:"https://yun
 const titles=new Set(),descriptions=new Set();
 for(const p of pages){
  const doc=docs.get(p.path);
+ assert.equal(doc.querySelectorAll('script[src="/guides/static-metrics.js"]').length,1,"Shared measurement gate: "+p.path);
+ for(const script of doc.querySelectorAll("script")){
+  if(["application/ld+json","application/json"].includes(script.type))continue;
+  assert.ok(script.src && new URL(script.src).origin==="https://yungdsa.com", "Executable script outside the same-origin policy: "+p.path);
+ }
+ for(const el of doc.querySelectorAll("*")){
+  assert.ok(!el.getAttributeNames().some(name=>/^on/i.test(name)),"Inline event handler: "+p.path);
+ }
+ assert.ok(doc.querySelector('a[href="/style/about/#privacy"]'),"Missing privacy control link: "+p.path);
  assert.equal(doc.querySelectorAll("h1").length,1,p.path+" needs one visible main heading");
  const title=doc.title.trim(),desc=doc.querySelector('meta[name="description"]')?.content;
  assert.ok(title && !titles.has(title),"Missing or duplicate title: "+p.path);titles.add(title);
@@ -113,6 +124,10 @@ for(const file of ["404.html","robots.txt","sitemap.xml"]){
 console.log(`SEO checks passed: ${pages.length} canonical pages, static content, links, images, structured data, sitemap and 404 configuration.`);
 async function hydrateCheck(){
  const dom=new JSDOM(read("index.html"),{url:"https://yungdsa.com/",pretendToBeVisual:true});
+ // jsdom lacks the native dialog methods. The browser test exercises real focus and Escape handling.
+ const dialog=dom.window.HTMLDialogElement.prototype;
+ if(!dialog.showModal)dialog.showModal=function(){this.setAttribute("open","");};
+ if(!dialog.close)dialog.close=function(){this.removeAttribute("open");this.dispatchEvent(new dom.window.Event("close"));};
  for(const name of ["window","document","navigator","HTMLElement","HTMLIFrameElement","Node","MutationObserver"])Object.defineProperty(globalThis,name,{value:dom.window[name],configurable:true,writable:true});
  globalThis.requestAnimationFrame=dom.window.requestAnimationFrame.bind(dom.window);
  globalThis.cancelAnimationFrame=dom.window.cancelAnimationFrame.bind(dom.window);

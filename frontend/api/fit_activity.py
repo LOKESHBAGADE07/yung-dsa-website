@@ -58,7 +58,9 @@ class handler(BaseHTTPRequestHandler):
         except (TypeError, ValueError, UnicodeError):
             return self.finish_response(400)
 
-        scope = "production" if os.getenv("VERCEL_ENV") == "production" else "preview"
+        if data.get("measurement") != "allow" or os.getenv("VERCEL_ENV") != "production":
+            return self.finish_response(204)
+        scope = "production"
         if self.headers.get("X-Fit-Check-Test") == "1":
             scope = "checks-" + scope
         day = datetime.now(timezone.utc).date().isoformat()
@@ -69,5 +71,6 @@ class handler(BaseHTTPRequestHandler):
         except Exception as error:
             print("Fit Check receipt failed:", type(error).__name__, flush=True)
             return self.finish_response(503)
-        print(f"Fit Check receipt stored {scope} {data['event']}", flush=True)
+        if scope == "checks-production":
+            print(f"Fit Check validation receipt stored {data['event']}", flush=True)
         self.finish_response(204)

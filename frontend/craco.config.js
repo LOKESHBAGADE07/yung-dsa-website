@@ -1,6 +1,8 @@
 // craco.config.js
 const path = require("path");
 require("dotenv").config();
+// Keep executable code in same-origin files covered by the production CSP.
+process.env.INLINE_RUNTIME_CHUNK = "false";
 
 // Check if we're in development/preview mode (not production build)
 // Craco sets NODE_ENV=development for start, NODE_ENV=production for build

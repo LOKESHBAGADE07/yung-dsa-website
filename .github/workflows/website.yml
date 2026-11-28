@@ -1,7 +1,7 @@
 name: Website build and SEO checks
 on:
   push:
-    paths: ['frontend/**', 'vercel.json', '.github/workflows/website.yml']
+    paths: ['frontend/**', 'api/**', 'requirements.txt', 'vercel.json', '.github/workflows/website.yml']
 permissions:
   contents: read
 concurrency:
@@ -34,6 +34,7 @@ jobs:
       - name: Verify receipt validation and browser interactions
         run: |
           python scripts/test_fit_receipts.py
+          python scripts/test_receipt_retention.py
           python scripts/fit_browser.py
       - name: Save responsive Fit Check previews
         if: always()
