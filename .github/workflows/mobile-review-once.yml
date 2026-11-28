@@ -1,0 +1,62 @@
+name: One-off production mobile review
+on:
+  push:
+    branches: ['audit/mobile-review-20261128']
+    paths: ['.github/workflows/mobile-review-once.yml']
+permissions:
+  contents: read
+jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Install pinned mobile test tools
+        run: |
+          mkdir -p "$RUNNER_TEMP/mobile-review"
+          cd "$RUNNER_TEMP/mobile-review"
+          npm install --no-audit --no-fund lighthouse@12.8.2 playwright-core@1.56.0
+      - name: Read the shared Google report
+        continue-on-error: true
+        working-directory: ${{ runner.temp }}/mobile-review
+        run: |
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright-core';
+          const browser = await chromium.launch({channel:'chrome',args:['--no-sandbox']});
+          try {
+            const page = await browser.newPage();
+            await page.goto('https://pagespeed.web.dev/analysis/https-yungdsa-com/8zqpmxr8iwbab2tqcbn7nd?form_factor=mobile&hl=en',{waitUntil:'domcontentloaded'});
+            try { await page.getByText(/Largest Contentful Paint/i).first().waitFor({timeout:20000}); } catch {}
+            const text=await page.locator('body').innerText();
+            const lines=text.split('\n').map(s=>s.trim()).filter(Boolean);
+            console.log('GOOGLE SAVED REPORT\n'+lines.slice(0,155).join('\n').slice(0,9500));
+          } finally { await browser.close(); }
+          JS
+      - name: Measure the deployed homepage on mobile three times
+        working-directory: ${{ runner.temp }}/mobile-review
+        run: |
+          python - <<'PY'
+          from urllib.request import urlopen
+          import time
+          for _ in range(30):
+              try:
+                  with urlopen('https://yungdsa.com/guides/static-metrics.js', timeout=6) as r:
+                      if b'yungdsa:measurement:v1' in r.read(): break
+              except OSError:
+                  pass
+              time.sleep(4)
+          else:
+              raise SystemExit('Production has not served the reviewed build')
+          PY
+          export CHROME_PATH="$(command -v google-chrome)"
+          for run in 1 2 3; do
+            ./node_modules/.bin/lighthouse https://yungdsa.com/ --quiet --only-categories=performance,accessibility,best-practices,seo --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' --output=json --output-path="mobile-$run.json"
+          done
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          for (const n of [1,2,3]) {
+            const l=JSON.parse(fs.readFileSync('mobile-'+n+'.json'));
+            if(l.runtimeError || !l.finalDisplayedUrl?.startsWith('https://yungdsa.com/')) throw Error('Unexpected audit response '+JSON.stringify(l.runtimeError));
+            const a=l.audits;
+            console.log('MOBILE RESULT '+JSON.stringify({run:n,version:l.lighthouseVersion,url:l.finalDisplayedUrl,device:l.configSettings.formFactor,scores:Object.fromEntries(Object.entries(l.categories).map(([k,v])=>[k,Math.round(100*v.score)])),fcp:a['first-contentful-paint'].numericValue,lcp:a['largest-contentful-paint'].numericValue,tbt:a['total-blocking-time'].numericValue,cls:a['cumulative-layout-shift'].numericValue}));
+          }
+          JS
