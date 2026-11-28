@@ -1,43 +1,70 @@
-name: Stage verified open font assets
+name: One-off production mobile review
 on:
   push:
     branches: ['audit/mobile-review-20261128']
     paths: ['.github/workflows/mobile-review-once.yml']
 permissions:
-  contents: write
+  contents: read
 jobs:
-  fonts:
+  mobile:
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-        with:
-          ref: 'de13d5c8f6ad901949c580036f009b79ea39b670'
-      - name: Copy the eight pinned WOFF2 files and their original licenses
+      - name: Install pinned mobile test tools
         run: |
-          python - <<'PY'
-          from hashlib import sha1
-          from pathlib import Path
-          from urllib.request import urlopen
-          pin = '5a72889057f592bb0659629e38337359f94d53b2'
-          expected = {"space-grotesk/files/space-grotesk-latin-ext-wght-normal.woff2":"db732c272dc2d48c5600b88ca24d2206fb123bd4","space-grotesk/files/space-grotesk-latin-wght-normal.woff2":"0f3474ee8af2f8253225f3b41bf79be986a1ae13","unbounded/files/unbounded-latin-ext-wght-normal.woff2":"e17f7659b355f822d9c0f039b8f74d52dc4104fe","unbounded/files/unbounded-latin-wght-normal.woff2":"3260a1939eb5a3020b48235c1a52852080f929b6","dm-sans/files/dm-sans-latin-ext-wght-normal.woff2":"db39c6263056cff430c828fe7035b9ba5edaa6ee","dm-sans/files/dm-sans-latin-wght-normal.woff2":"01383d7e5c4340847b8fe4570ad0458e6582989d","manrope/files/manrope-latin-ext-wght-normal.woff2":"bd24140af06f1b5897d3bbd6538a74b03748a21e","manrope/files/manrope-latin-wght-normal.woff2":"71eb731d558046199aa7f985adbf812890a093a1"}
-          target = Path('frontend/public/fonts')
-          (target / 'files').mkdir(parents=True)
-          (target / 'licenses').mkdir()
-          for path, digest in expected.items():
-              with urlopen(f'https://raw.githubusercontent.com/fontsource/font-files/{pin}/fonts/variable/{path}', timeout=20) as resp:
-                  data = resp.read()
-              assert data[:4] == b'wOF2'
-              assert sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest() == digest
-              (target / 'files' / Path(path).name).write_bytes(data)
-          for family in sorted({p.split('/')[0] for p in expected}):
-              with urlopen(f'https://raw.githubusercontent.com/fontsource/font-files/{pin}/fonts/variable/{family}/LICENSE', timeout=20) as resp:
-                  data = resp.read()
-              assert b'SIL OPEN FONT LICENSE' in data.upper()
-              (target / 'licenses' / (family+'.txt')).write_bytes(data)
-          PY
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -- frontend/public/fonts/
-          git commit -m 'Vendor verified font subsets and original Open Font Licenses'
-          git push origin HEAD:refs/heads/codex/font-assets-20261128
+          mkdir -p "$RUNNER_TEMP/mobile-review"
+          cd "$RUNNER_TEMP/mobile-review"
+          npm install --no-audit --no-fund lighthouse@12.8.2 playwright-core@1.56.0
+      - name: Verify the live font and hero requests
+        working-directory: ${{ runner.temp }}/mobile-review
+        run: |
+          node --input-type=module <<'JS'
+          import {chromium} from 'playwright-core';
+          import assert from 'node:assert/strict';
+          import {setTimeout as delay} from 'node:timers/promises';
+          const base='https://yungdsa.com';
+          for(let i=0;i<30;i++){
+            try {
+              const r=await fetch(base+'/fonts/site.css');
+              if(r.ok && (await r.text()).includes('Space Grotesk')) break;
+            } catch {}
+            if(i===29) throw Error('Latest font assets not live');
+            await delay(4000);
+          }
+          const b=await chromium.launch({channel:'chrome',args:['--no-sandbox']});
+          try{
+            const page=await b.newPage({viewport:{width:390,height:844},deviceScaleFactor:2});
+            const req=[];
+            page.on('request',r=>req.push(r.url()));
+            const response=await page.goto(base+'/',{waitUntil:'load'});
+            await page.evaluate(()=>document.fonts.ready);
+            const data=await page.evaluate(()=>{
+              const hero=document.querySelector('[data-testid="hero-image"]');
+              const fonts=performance.getEntriesByType('resource').filter(r=>r.name.endsWith('.woff2')).map(r=>r.name);
+              const imageEntries=performance.getEntriesByName(hero.currentSrc).map(entry=>entry.initiatorType);
+              return {fonts,hero:hero.currentSrc,heroWidth:hero.naturalWidth,preload:document.head.querySelector('link[as="image"]')?.imageSrcset,initiators:imageEntries};
+            });
+            assert(data.fonts.length>0 && data.fonts.every(x=>x.startsWith(base+'/fonts/files/')));
+            assert(!req.some(x=>/^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(x)||/emergent\.sh|googlesyndication\.com|\/_vercel\/(insights|speed-insights)/.test(x)));
+            assert(data.heroWidth>0 && data.preload && data.initiators.length===1);
+            assert(response.headers()['content-security-policy'].includes("font-src 'self'"));
+            console.log('VERIFIED RESOURCES '+JSON.stringify(data));
+          }finally{await b.close();}
+          JS
+      - name: Measure the deployed homepage on mobile three times
+        working-directory: ${{ runner.temp }}/mobile-review
+        run: |
+          export CHROME_PATH="$(command -v google-chrome)"
+          for run in 1 2 3; do
+            ./node_modules/.bin/lighthouse https://yungdsa.com/ --quiet --only-categories=performance,accessibility,best-practices,seo --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' --output=json --output-path="mobile-$run.json"
+          done
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          for (const n of [1,2,3]) {
+            const l=JSON.parse(fs.readFileSync('mobile-'+n+'.json'));
+            if(l.runtimeError || !l.finalDisplayedUrl?.startsWith('https://yungdsa.com/')) throw Error('Unexpected audit response '+JSON.stringify(l.runtimeError));
+            const a=l.audits;
+            if(n===3) console.log('A11Y REMAINING '+JSON.stringify(l.categories.accessibility.auditRefs.filter(x=>a[x.id].score===0).map(x=>({id:x.id,nodes:a[x.id].details?.items?.map(i=>i.node?.selector).slice(0,20)}))));
+            console.log('MOBILE RESULT '+JSON.stringify({run:n,version:l.lighthouseVersion,url:l.finalDisplayedUrl,device:l.configSettings.formFactor,scores:Object.fromEntries(Object.entries(l.categories).map(([k,v])=>[k,Math.round(100*v.score)])),fcp:a['first-contentful-paint'].numericValue,lcp:a['largest-contentful-paint'].numericValue,tbt:a['total-blocking-time'].numericValue,cls:a['cumulative-layout-shift'].numericValue}));
+          }
+          JS
