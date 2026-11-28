@@ -71,5 +71,6 @@ class handler(BaseHTTPRequestHandler):
         except Exception as error:
             print("Fit Check receipt failed:", type(error).__name__, flush=True)
             return self.finish_response(503)
-        print(f"Fit Check receipt stored {scope} {data['event']}", flush=True)
+        if scope == "checks-production":
+            print(f"Fit Check validation receipt stored {data['event']}", flush=True)
         self.finish_response(204)

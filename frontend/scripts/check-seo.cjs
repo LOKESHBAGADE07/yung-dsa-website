@@ -2,6 +2,8 @@
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),assert=require("node:assert/strict"),Module=require("node:module");
 const root=path.resolve(__dirname,".."),output=path.join(root,"build");
+assert.equal(fs.readFileSync(path.join(root,"requirements.txt"),"utf8").trim(),
+ fs.readFileSync(path.join(root,"..","requirements.txt"),"utf8").trim(),"Both Vercel build roots need identical direct Python pins");
 const pages=require("../data/seo-pages.json");
 const projectRequire=Module.createRequire(path.join(root,"package.json"));
 const scriptsRequire=Module.createRequire(projectRequire.resolve("react-scripts/package.json"));

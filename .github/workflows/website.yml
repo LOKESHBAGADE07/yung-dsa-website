@@ -1,7 +1,7 @@
 name: Website build and SEO checks
 on:
   push:
-    paths: ['frontend/**', 'vercel.json', '.github/workflows/website.yml']
+    paths: ['frontend/**', 'api/**', 'requirements.txt', 'vercel.json', '.github/workflows/website.yml']
 permissions:
   contents: read
 concurrency:
