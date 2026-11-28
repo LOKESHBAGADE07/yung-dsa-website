@@ -18,6 +18,7 @@ function App() {
   }, [video]);
   const openVideo = (event, item) => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (typeof window.HTMLDialogElement?.prototype.showModal !== "function") return;
     event.preventDefault();
     setVideo(item);
   };

@@ -122,6 +122,10 @@ for(const file of ["404.html","robots.txt","sitemap.xml"]){
 console.log(`SEO checks passed: ${pages.length} canonical pages, static content, links, images, structured data, sitemap and 404 configuration.`);
 async function hydrateCheck(){
  const dom=new JSDOM(read("index.html"),{url:"https://yungdsa.com/",pretendToBeVisual:true});
+ // jsdom lacks the native dialog methods. The browser test exercises real focus and Escape handling.
+ const dialog=dom.window.HTMLDialogElement.prototype;
+ if(!dialog.showModal)dialog.showModal=function(){this.setAttribute("open","");};
+ if(!dialog.close)dialog.close=function(){this.removeAttribute("open");this.dispatchEvent(new dom.window.Event("close"));};
  for(const name of ["window","document","navigator","HTMLElement","HTMLIFrameElement","Node","MutationObserver"])Object.defineProperty(globalThis,name,{value:dom.window[name],configurable:true,writable:true});
  globalThis.requestAnimationFrame=dom.window.requestAnimationFrame.bind(dom.window);
  globalThis.cancelAnimationFrame=dom.window.cancelAnimationFrame.bind(dom.window);
