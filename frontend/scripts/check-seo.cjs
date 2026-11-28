@@ -60,7 +60,16 @@ for(const p of pages){
 }
 const home=docs.get("/");
 assert.equal(home.querySelector("#root").dataset.prerendered,"true");
-assert.equal(home.querySelectorAll('a[data-testid^="release-card-"]').length,11);
+const catalogue = Array.from(home.querySelectorAll('a[data-testid^="release-card-"]'));
+const songTitles = catalogue.map(card => card.querySelector("h3").textContent.trim());
+assert.ok(songTitles.length >= 13, "Keep the full selected catalogue visible before hydration");
+assert.equal(new Set(songTitles).size, songTitles.length, "Duplicate title in the selected catalogue");
+assert.equal(parseInt(home.querySelector('[data-testid="catalogue-count"]').textContent, 10), songTitles.length);
+for (const title of ["HOOD TALK", "MODUS OPERANDI", "GONI MEIN PAISA", "RADE RAPATE", "YEDA YUNG"]) {
+ assert.ok(songTitles.includes(title), "Missing release: " + title);
+}
+const featuredTitles = Array.from(home.querySelectorAll('a[data-testid^="video-card-"] strong'), el => el.textContent);
+assert.deepEqual(featuredTitles, ["HOOD TALK", "FACHADI", "RADE RAPATE"]);
 assert.ok(home.querySelector('a[href="/style/goggles-sunglasses/"]'));
 assert.ok(home.querySelector('a[href="/style/baggy-lowers/"]'));
 assert.ok(home.querySelector('a[href="https://www.linkedin.com/in/lokeshbagade/"]'));
@@ -154,9 +163,10 @@ async function hydrateCheck(){
   const button=document.querySelector('[data-testid="mobile-menu-button"]');
   button.click();await settle();assert.equal(button.getAttribute("aria-expanded"),"true");
   document.querySelector('[data-testid="nav-music-link"]').click();await settle();assert.equal(button.getAttribute("aria-expanded"),"false");
-  const video=document.querySelector('[data-testid="release-card-0"]');
+  const video=document.querySelector('.release-row[href="https://www.youtube.com/watch?v=1CINF9mbPtU"]');
   const ordinary=new dom.window.MouseEvent("click",{bubbles:true,cancelable:true,button:0});
-  video.dispatchEvent(ordinary);await settle();assert.equal(ordinary.defaultPrevented,true);assert.ok(document.querySelector('[data-testid="video-modal"]'));
+  video.dispatchEvent(ordinary);await settle();assert.equal(ordinary.defaultPrevented,true);
+  assert.equal(document.querySelector('[data-testid="video-modal-player"]').title,"MODUS OPERANDI - official audio");
   document.querySelector('[data-testid="video-modal-close"]').click();await settle();assert.ok(!document.querySelector('[data-testid="video-modal"]'));
   const modified=new dom.window.MouseEvent("click",{bubbles:true,cancelable:true,button:0,ctrlKey:true});
   // Prevent jsdom navigation after checking that the component kept normal browser link semantics.

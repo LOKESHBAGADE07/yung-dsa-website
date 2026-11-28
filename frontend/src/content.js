@@ -1,6 +1,4 @@
-// All entries below are sourced from YUNG DSA's official public channels
-// (YouTube @yung_dsa, Spotify artist page, Apple Music, Instagram) and verified press.
-// Video IDs and titles come from the official YouTube channel "YUNG DSA".
+// Video links go to the artist, the releasing label or the film's distributor.
 
 export const links = {
   instagram: "https://www.instagram.com/yung_dsa/",
@@ -30,14 +28,17 @@ export const latestRelease = {
   videoType: "Official lyric video",
   year: "2026",
   youtubeId: "D72IGt5CYl4",
-  detail: "A 2026 release rooted in Yerwada and its local speech. Watch the official lyric video, then explore the song-context guide.",
+  detail: "Released on 20 November 2026, Hood Talk pairs Yung DSA’s Yerwada references with production by Starboibeatz.",
+  appleMusic: "https://music.apple.com/us/album/hood-talk-single/6834405615",
 };
 
-// Official releases with music or lyric videos (newest first)
+// Selected releases and collaborations with official playback links, newest first.
 export const releases = [
-  { title: "HOOD TALK", year: "2026", note: "Official lyric video", videoType: "Official lyric video", youtubeId: "D72IGt5CYl4" },
-  { title: "FACHADI", year: "2026", note: "Prod. Cosmo Drop", youtubeId: "XbG9xca0Qvo" },
-  { title: "RADE RAPATE", year: "2026", note: "Gully Gang Records / Prod. Starboibeatz", youtubeId: "ZMQBrlntZEM" },
+  { title: latestRelease.title, year: latestRelease.year, note: "20 Nov · Prod. Starboibeatz", videoType: latestRelease.videoType, youtubeId: latestRelease.youtubeId, featured: true },
+  { title: "MODUS OPERANDI", year: "2026", note: "One of a Kind · With Yung Sammy · Arranged by Wamp", videoType: "Official audio", youtubeId: "1CINF9mbPtU" },
+  { title: "FACHADI", year: "2026", note: "Prod. Cosmo Drop", youtubeId: "XbG9xca0Qvo", featured: true },
+  { title: "GONI MEIN PAISA", year: "2026", note: "7 Apr · Toaster soundtrack · Rap by Yung DSA, music by Aman Pant", videoType: "Official lyric video", youtubeId: "0fb4zmzR2JA" },
+  { title: "RADE RAPATE", year: "2026", note: "6 Mar · Gully Gang Records / Prod. Starboibeatz", youtubeId: "ZMQBrlntZEM", featured: true },
   { title: "MAAF KAR", year: "2025", note: "Sony Music India / Prod. Cosmo Drop", youtubeId: "plK0mRQEluI" },
   { title: "CHALA KALTI", year: "2025", note: "Prod. Yeardown", youtubeId: "dkbu2RVP190" },
   { title: "YEDA YUNG", year: "2024", note: "Gully Gang Records / Prod. YD", youtubeId: "Ym4ti89tItw", thumbQuality: "hqdefault" },
@@ -48,7 +49,7 @@ export const releases = [
   { title: "YUNG SITAR", year: "2021", note: "Dir. Gaurav Bhat", youtubeId: "njp-feQu9iE" },
 ];
 
-export const featuredVideos = releases.slice(0, 3);
+export const featuredVideos = releases.filter(release => release.featured);
 
 
 export const press = [
