@@ -6,57 +6,58 @@ on:
 permissions:
   contents: read
 jobs:
-  mobile:
+  details:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 8
     steps:
-      - name: Install pinned mobile test tools
+      - name: Install test tools
         run: |
           mkdir -p "$RUNNER_TEMP/mobile-review"
           cd "$RUNNER_TEMP/mobile-review"
           npm install --no-audit --no-fund lighthouse@12.8.2 playwright-core@1.56.0
-      - name: Read the shared Google report
-        continue-on-error: true
+      - name: Read saved Lighthouse panel and measure existing artwork variants
         working-directory: ${{ runner.temp }}/mobile-review
         run: |
           node --input-type=module <<'JS'
           import { chromium } from 'playwright-core';
-          const browser = await chromium.launch({channel:'chrome',args:['--no-sandbox']});
+          const browser=await chromium.launch({channel:'chrome',args:['--no-sandbox']});
           try {
-            const page = await browser.newPage();
+            const page=await browser.newPage();
             await page.goto('https://pagespeed.web.dev/analysis/https-yungdsa-com/8zqpmxr8iwbab2tqcbn7nd?form_factor=mobile&hl=en',{waitUntil:'domcontentloaded'});
-            try { await page.getByText(/Largest Contentful Paint/i).first().waitFor({timeout:20000}); } catch {}
-            const text=await page.locator('body').innerText();
-            const lines=text.split('\n').map(s=>s.trim()).filter(Boolean);
-            console.log('GOOGLE SAVED REPORT\n'+lines.slice(0,155).join('\n').slice(0,9500));
+            try { await page.getByText('Diagnose performance issues',{exact:true}).scrollIntoViewIfNeeded({timeout:20000}); } catch {}
+            for(let n=0;n<12;n++){
+              if((await Promise.all(page.frames().map(f=>f.locator('.lh-gauge__percentage').count().catch(()=>0)))).some(Boolean)) break;
+              await page.waitForTimeout(1500);
+            }
+            for(const f of page.frames()){
+              const groups=await f.locator('.lh-gauge__wrapper, .lh-metric').allTextContents().catch(()=>[]);
+              const snapshot=await f.locator('body').ariaSnapshot({timeout:4000}).catch(()=>'');
+              const lines=snapshot.split('\n').filter(s=>/Performance|Accessibility|Best Practices|SEO|Contentful Paint|Blocking Time|Layout Shift|Speed Index|Element render delay|image delivery|unused JavaScript|[0-9]+(\.[0-9]+)? (s|ms|KiB)|[0-9]{2,3}$/.test(s)).slice(0,110);
+              console.log('SAVED FRAME '+JSON.stringify({groups:groups.slice(0,14),details:lines}).slice(0,11000));
+            }
+            for(const [folder,name] of [['vi','maxresdefault.jpg'],['vi_webp','maxresdefault.webp'],['vi','mqdefault.jpg'],['vi_webp','mqdefault.webp'],['vi_webp','sddefault.webp'],['vi_webp','hq720.webp']]){
+              const url='https://i.ytimg.com/'+folder+'/plK0mRQEluI/'+name;
+              const response=await page.request.get(url);
+              const bytes=await response.body();
+              const size=await page.evaluate(async ({data,type})=>{
+                const img=await createImageBitmap(new Blob([Uint8Array.from(atob(data),v=>v.charCodeAt(0))],{type}));
+                return [img.width,img.height];
+              },{data:bytes.toString('base64'),type:response.headers()['content-type']}).catch(()=>null);
+              console.log('ARTWORK '+JSON.stringify({url,status:response.status(),bytes:bytes.length,size}));
+            }
           } finally { await browser.close(); }
           JS
-      - name: Measure the deployed homepage on mobile three times
+      - name: Inspect remaining mobile performance and accessibility findings
         working-directory: ${{ runner.temp }}/mobile-review
         run: |
-          python - <<'PY'
-          from urllib.request import urlopen
-          import time
-          for _ in range(30):
-              try:
-                  with urlopen('https://yungdsa.com/guides/static-metrics.js', timeout=6) as r:
-                      if b'yungdsa:measurement:v1' in r.read(): break
-              except OSError:
-                  pass
-              time.sleep(4)
-          else:
-              raise SystemExit('Production has not served the reviewed build')
-          PY
           export CHROME_PATH="$(command -v google-chrome)"
-          for run in 1 2 3; do
-            ./node_modules/.bin/lighthouse https://yungdsa.com/ --quiet --only-categories=performance,accessibility,best-practices,seo --chrome-flags='--headless --no-sandbox --disable-dev-shm-usage' --output=json --output-path="mobile-$run.json"
-          done
+          ./node_modules/.bin/lighthouse https://yungdsa.com/ --quiet --only-categories=performance,accessibility --chrome-flags='--headless --no-sandbox' --output=json --output-path=detail.json
           node --input-type=module <<'JS'
           import fs from 'node:fs';
-          for (const n of [1,2,3]) {
-            const l=JSON.parse(fs.readFileSync('mobile-'+n+'.json'));
-            if(l.runtimeError || !l.finalDisplayedUrl?.startsWith('https://yungdsa.com/')) throw Error('Unexpected audit response '+JSON.stringify(l.runtimeError));
-            const a=l.audits;
-            console.log('MOBILE RESULT '+JSON.stringify({run:n,version:l.lighthouseVersion,url:l.finalDisplayedUrl,device:l.configSettings.formFactor,scores:Object.fromEntries(Object.entries(l.categories).map(([k,v])=>[k,Math.round(100*v.score)])),fcp:a['first-contentful-paint'].numericValue,lcp:a['largest-contentful-paint'].numericValue,tbt:a['total-blocking-time'].numericValue,cls:a['cumulative-layout-shift'].numericValue}));
+          const r=JSON.parse(fs.readFileSync('detail.json'));
+          for(const [k,a] of Object.entries(r.audits)) {
+            if((a.score===0 && r.categories.accessibility.auditRefs.some(x=>x.id===k)) || k==='largest-contentful-paint-element' || k==='lcp-breakdown-insight' || k==='render-blocking-resources'){
+              console.log('LIVE DETAIL '+k+' '+JSON.stringify(a.details?.items?.slice(0,4)??[]).slice(0,3500));
+            }
           }
           JS
