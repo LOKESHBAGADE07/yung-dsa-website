@@ -58,7 +58,9 @@ class handler(BaseHTTPRequestHandler):
         except (TypeError, ValueError, UnicodeError):
             return self.finish_response(400)
 
-        scope = "production" if os.getenv("VERCEL_ENV") == "production" else "preview"
+        if data.get("measurement") != "allow" or os.getenv("VERCEL_ENV") != "production":
+            return self.finish_response(204)
+        scope = "production"
         if self.headers.get("X-Fit-Check-Test") == "1":
             scope = "checks-" + scope
         day = datetime.now(timezone.utc).date().isoformat()

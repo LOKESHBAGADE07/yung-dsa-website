@@ -19,6 +19,52 @@ ROUTE = "/style/fit-check/"
 class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self, *args):
         pass
+    def end_headers(self):
+        for name, value in SECURITY_HEADERS.items():
+            self.send_header(name, value)
+        super().end_headers()
+
+SECURITY_HEADERS = json.loads((ROOT / "vercel.json").read_text())["routes"][0]["headers"]
+
+
+def check_privacy(browser, base, signal=None):
+    ctx = browser.new_context(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
+    requests = []
+    if signal:
+        ctx.add_init_script(
+            "localStorage.setItem('yungdsa:measurement:v1','allow');"
+            + ("Object.defineProperty(navigator,'globalPrivacyControl',{value:true});" if signal == "GPC"
+               else "Object.defineProperty(navigator,'doNotTrack',{value:'1'});")
+        )
+    ctx.on("request", lambda req: requests.append(req.url))
+    ctx.route("**/_vercel/**", lambda route: route.fulfill(content_type="text/javascript", body=""))
+    tab = ctx.new_page()
+    try:
+        response = tab.goto(base, wait_until="load")
+        policy = response.headers.get("content-security-policy", "")
+        assert "script-src 'self';" in policy and "'unsafe-eval'" not in policy
+        assert tab.locator('iframe[src*="spotify.com"]').count() == 0
+        tab.get_by_role("link", name="Privacy & analytics", exact=True).click()
+        status = tab.locator("[data-measurement-status]")
+        expect(status).to_contain_text("privacy signal" if signal else "measurement is off")
+        if signal:
+            expect(tab.get_by_role("button", name="Allow measurement")).to_be_disabled()
+        tab.goto(base + ROUTE, wait_until="load")
+        tab.get_by_role("button", name="Reveal my fit").click()
+        expect(tab.locator("[data-result]")).to_be_visible()
+        assert not any("/api/fit_activity" in url or "/_vercel/" in url or "emergent.sh" in url or "googlesyndication" in url for url in requests)
+        if not signal:
+            tab.goto(base + "/style/about/#privacy")
+            tab.get_by_role("button", name="Allow measurement").click()
+            expect(status).to_contain_text("measurement is on")
+            tab.get_by_role("button", name="Keep measurement off").click()
+            expect(status).to_contain_text("measurement is off")
+            requests.clear()
+            tab.goto(base + ROUTE, wait_until="load")
+            tab.get_by_role("button", name="Reveal my fit").click()
+            assert not any("/api/fit_activity" in url or "/_vercel/" in url for url in requests)
+    finally:
+        ctx.close()
 
 def check_guide_journey(page, base, events):
     page.goto(base, wait_until="domcontentloaded")
@@ -83,6 +129,21 @@ def run(base, out, live):
             page = ctx.new_page()
             page.on("pageerror", lambda err: page_errors.append(str(err)))
             page.goto(base, wait_until="domcontentloaded")
+            page.get_by_role("link", name="Privacy & analytics", exact=True).click()
+            page.get_by_role("button", name="Allow measurement").click()
+            expect(page.locator("[data-measurement-status]")).to_contain_text("measurement is on")
+            page.goto(base, wait_until="domcontentloaded")
+            if width == 390:
+                hero = page.locator('[data-testid="hero-image"]')
+                assert hero.get_attribute("srcset") and hero.get_attribute("fetchpriority") == "high"
+                video = page.locator('[data-testid="latest-release-play-button"]')
+                video.focus()
+                video.press("Enter")
+                expect(page.get_by_role("dialog")).to_be_visible()
+                page.keyboard.press("Escape")
+                expect(video).to_be_focused()
+                page.get_by_role("button", name="Load Spotify player").click()
+                expect(page.locator('[data-testid="spotify-player"]')).to_be_visible()
             page.locator('[data-testid="hero-style-button"]').click()
             expect(page.locator("[data-builder]")).to_be_visible()
             expect(page.locator("[data-total]")).to_have_text("₹2,050")
@@ -146,20 +207,13 @@ def run(base, out, live):
             assert not page_errors, page_errors
             print(f"{width}px — selection, budgets, share, restore, PNG, guide navigation, both wallpaper choices and {len(events)} receipts passed", flush=True)
             ctx.close()
+        for signal in (None, "GPC", "DNT"):
+            check_privacy(browser, base, signal)
         if not live:
             ctx = browser.new_context(java_script_enabled=False, viewport={"width":320,"height":740})
             tab = ctx.new_page()
             tab.goto(base + ROUTE, wait_until="domcontentloaded")
             assert tab.locator("noscript li a").count() == len(catalogue)
-            ctx.close()
-            ctx = browser.new_context()
-            sent = []
-            ctx.add_init_script("Object.defineProperty(navigator,'globalPrivacyControl',{value:true})")
-            ctx.on("request", lambda req: sent.append(req.url))
-            tab = ctx.new_page()
-            tab.goto(base + ROUTE, wait_until="domcontentloaded")
-            tab.get_by_role("button", name="Reveal my fit").click()
-            assert not any("/api/fit_activity" in url or "/_vercel/" in url for url in sent)
             ctx.close()
         browser.close()
 

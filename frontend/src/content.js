@@ -18,6 +18,7 @@ export const spotifyEmbed = "https://open.spotify.com/embed/artist/5e8gOu2fk8b1t
 export const images = {
   // Official still from the MAAF KAR music video (Sony Music India, 2025)
   hero: ytThumb("plK0mRQEluI"),
+  heroSmall: ytThumb("plK0mRQEluI", "mqdefault"),
 };
 
 export const bio =

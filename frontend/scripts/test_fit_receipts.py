@@ -10,9 +10,13 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from api import fit_activity
 
-EVENT = {"event":"retailer_click","source":"fit-check","product":"y2k-001","id":"199213bb-45c2-4253-bc1d-5e3a977682ab"}
+EVENT = {"event":"retailer_click","measurement":"allow","source":"fit-check","product":"y2k-001","id":"199213bb-45c2-4253-bc1d-5e3a977682ab"}
 
 class ReceiptTest(unittest.TestCase):
+    def setUp(self):
+        environment = patch.dict(fit_activity.os.environ, {"VERCEL_ENV": "production"})
+        environment.start()
+        self.addCleanup(environment.stop)
     @classmethod
     def setUpClass(cls):
         cls.server = ThreadingHTTPServer(("127.0.0.1",0), fit_activity.handler)
@@ -56,7 +60,7 @@ class ReceiptTest(unittest.TestCase):
 
     @patch.object(fit_activity, "put_blob")
     def test_wallpaper_choices_are_separate_and_allowlisted(self, put):
-        payload = {"event": "wallpaper_choice", "id": EVENT["id"]}
+        payload = {"event": "wallpaper_choice", "measurement":"allow", "id": EVENT["id"]}
         for choice in ("artist-photos", "download-artwork"):
             self.assertEqual(self.send({**payload, "choice": choice}), 204)
             self.assertIn("/wallpaper_choice/" + choice + "/", put.call_args.args[0])
@@ -66,6 +70,14 @@ class ReceiptTest(unittest.TestCase):
     @patch.object(fit_activity,"put_blob",side_effect=RuntimeError("unavailable"))
     def test_unavailable_destination_does_not_acknowledge_receipt(self,_):
         self.assertEqual(self.send(EVENT),503)
+
+    @patch.object(fit_activity, "put_blob")
+    def test_preview_or_missing_permission_never_writes(self, put):
+        self.assertEqual(self.send({k:v for k,v in EVENT.items() if k != "measurement"}), 204)
+        self.assertEqual(self.send(EVENT, DNT="1"), 204)
+        with patch.dict(fit_activity.os.environ, {"VERCEL_ENV": "preview"}):
+            self.assertEqual(self.send(EVENT), 204)
+        put.assert_not_called()
 
 if __name__ == "__main__":
     unittest.main()

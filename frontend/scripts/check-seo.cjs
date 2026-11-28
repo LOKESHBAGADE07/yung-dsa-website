@@ -12,6 +12,15 @@ const docs=new Map(pages.map(p=>[p.path,new JSDOM(read(p.file),{url:"https://yun
 const titles=new Set(),descriptions=new Set();
 for(const p of pages){
  const doc=docs.get(p.path);
+ assert.equal(doc.querySelectorAll('script[src="/guides/static-metrics.js"]').length,1,"Shared measurement gate: "+p.path);
+ for(const script of doc.querySelectorAll("script")){
+  if(["application/ld+json","application/json"].includes(script.type))continue;
+  assert.ok(script.src && new URL(script.src).origin==="https://yungdsa.com", "Executable script outside the same-origin policy: "+p.path);
+ }
+ for(const el of doc.querySelectorAll("*")){
+  assert.ok(!el.getAttributeNames().some(name=>/^on/i.test(name)),"Inline event handler: "+p.path);
+ }
+ assert.ok(doc.querySelector('a[href="/style/about/#privacy"]'),"Missing privacy control link: "+p.path);
  assert.equal(doc.querySelectorAll("h1").length,1,p.path+" needs one visible main heading");
  const title=doc.title.trim(),desc=doc.querySelector('meta[name="description"]')?.content;
  assert.ok(title && !titles.has(title),"Missing or duplicate title: "+p.path);titles.add(title);

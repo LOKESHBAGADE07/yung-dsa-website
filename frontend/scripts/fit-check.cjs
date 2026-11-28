@@ -77,6 +77,6 @@ module.exports = function fitCheckPage(catalogue) {
   <a href="/style/baggy-lowers/">Check how the lowers fit</a>
   <a href="/style/hoodies-brand/#company">See the clothing credits</a>
 </nav>
-</main><footer><span>Independent fan guide by <a href="https://www.linkedin.com/in/lokeshbagade/" target="_blank" rel="noopener noreferrer">Lokesh Bagade</a>.</span><span>Retailer links earn no commission. <a href="/style/about/">Sources &amp; privacy</a></span></footer>
+</main><footer><span>Independent fan guide by <a href="https://www.linkedin.com/in/lokeshbagade/" target="_blank" rel="noopener noreferrer">Lokesh Bagade</a>.</span><span>Retailer links earn no commission. <a href="/style/about/#privacy">Privacy &amp; analytics</a></span></footer>
 <script id="fit-data" type="application/json">${json({products:data,date})}</script></body></html>\n`;
 };
